@@ -1,119 +1,142 @@
 'use client';
-import React, { useEffect, useRef, useState } from "react";
-import {
-  motion,
-  useAnimationFrame,
-  useMotionValue,
-  useScroll,
-  useSpring,
-  useTransform,
-  useVelocity,
-} from "framer-motion";
+import { useEffect, useRef } from 'react';
 
-const wrap = (min, max, v) => {
-  const rangeSize = max - min;
-  return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
-};
+const GentleWaveSection = () => {
+  const canvasRef = useRef(null);
 
-const VelocityScroll = ({
-  text,
-  default_velocity = 5,
-  className,
-}) => {
-  function ParallaxText({
-    children,
-    baseVelocity = 100,
-    className,
-  }) {
-    const baseX = useMotionValue(0);
-    const { scrollY } = useScroll();
-    const scrollVelocity = useVelocity(scrollY);
-    const smoothVelocity = useSpring(scrollVelocity, {
-      damping: 50,
-      stiffness: 400,
-    });
-    const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], {
-      clamp: false,
-    });
-    const [repetitions, setRepetitions] = useState(1);
-    const containerRef = useRef(null);
-    const textRef = useRef(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    useEffect(() => {
-      const calculateRepetitions = () => {
-        if (containerRef.current && textRef.current) {
-          const containerWidth = containerRef.current.offsetWidth;
-          const textWidth = textRef.current.offsetWidth;
-          const newRepetitions = Math.ceil(containerWidth / textWidth) + 2;
-          setRepetitions(newRepetitions);
-        }
-      };
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+    let time = 0;
 
-      calculateRepetitions();
-      window.addEventListener("resize", calculateRepetitions);
-      return () => window.removeEventListener("resize", calculateRepetitions);
-    }, [children]);
+    // Set canvas size
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = 100;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
-    const x = useTransform(baseX, (v) => `${wrap(-100 / repetitions, 0, v)}%`);
-    const directionFactor = React.useRef(1);
+    // Wave configuration
+    const waves = [
+      {
+        amplitude: 15,
+        frequency: 0.015,
+        speed: 0.015,
+        opacity: 0.03,
+        color: '#cc878e',
+        offset: 0
+      },
+      {
+        amplitude: 20,
+        frequency: 0.012,
+        speed: 0.01,
+        opacity: 0.04,
+        color: '#ffe3e8',
+        offset: 50
+      },
+      {
+        amplitude: 12,
+        frequency: 0.018,
+        speed: 0.02,
+        opacity: 0.025,
+        color: '#00c9bb',
+        offset: 100
+      },
+      {
+        amplitude: 18,
+        frequency: 0.01,
+        speed: 0.012,
+        opacity: 0.035,
+        color: '#94545c',
+        offset: 150
+      }
+    ];
 
-    useAnimationFrame((t, delta) => {
-      let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
+    const drawWave = (wave, time) => {
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height / 2);
 
-      if (velocityFactor.get() < 0) {
-        directionFactor.current = -1;
-      } else if (velocityFactor.get() > 0) {
-        directionFactor.current = 1;
+      for (let x = 0; x < canvas.width; x++) {
+        const y = 
+          canvas.height / 2 + 
+          wave.amplitude * Math.sin(x * wave.frequency + time * wave.speed + wave.offset);
+        ctx.lineTo(x, y);
       }
 
-      moveBy += directionFactor.current * moveBy * velocityFactor.get();
-      baseX.set(baseX.get() + moveBy);
-    });
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.lineTo(0, canvas.height);
+      ctx.closePath();
 
-    return (
-      <div
-        className="w-full overflow-hidden whitespace-nowrap"
-        ref={containerRef}
-      >
-        <motion.div className={`inline-block ${className}`} style={{ x }}>
-          {Array.from({ length: repetitions }).map((_, i) => (
-            <span key={i} ref={i === 0 ? textRef : null}>
-              {children}{" "}
-            </span>
-          ))}
-        </motion.div>
-      </div>
-    );
-  }
+      ctx.fillStyle = wave.color;
+      ctx.globalAlpha = wave.opacity;
+      ctx.fill();
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      waves.forEach(wave => {
+        drawWave(wave, time);
+      });
+
+      time += 1;
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
 
   return (
-    <section className="relative w-full">
-      <ParallaxText baseVelocity={default_velocity} className={className}>
-        {text}
-      </ParallaxText>
-      <ParallaxText baseVelocity={-default_velocity} className={className}>
-        {text}
-      </ParallaxText>
-    </section>
-  );
-};
-
-const VelocityScrollSection = () => {
-  return (
-    <div className="relative w-full py-20 md:py-32 bg-white overflow-hidden">
-      <VelocityScroll
-        text="DEAD SEA MINERALS • PURE & NATURAL • ANCIENT HEALING • "
-        default_velocity={1}
-        className="font-black text-6xl md:text-8xl lg:text-9xl tracking-tight"
+    <div className="relative w-full overflow-hidden" style={{ height: '100px' }}>
+      {/* Gradient blend at top */}
+      <div 
+        className="absolute inset-x-0 top-0 h-8 pointer-events-none"
         style={{
-          background: 'linear-gradient(135deg, #1a1a2e 0%, #cbc2d7 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text'
+          background: 'linear-gradient(180deg, #ffffff 0%, transparent 100%)',
+          zIndex: 10
         }}
       />
+      
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+        style={{ background: 'transparent' }}
+      />
+      
+      {/* Gradient blend at bottom */}
+      <div 
+        className="absolute inset-x-0 bottom-0 h-12 pointer-events-none"
+        style={{
+          background: 'linear-gradient(180deg, transparent 0%, #ffe3e8 100%)',
+          zIndex: 10
+        }}
+      />
+      
+      {/* Optional: Add subtle overlay text */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 5 }}>
+        <div className="text-center">
+          <p 
+            className="text-xs md:text-sm font-medium tracking-[0.3em] uppercase"
+            style={{ 
+              color: '#cc878e',
+              opacity: 0.3
+            }}
+          >
+            Sourced from the Dead Sea
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default VelocityScrollSection;
+export default GentleWaveSection;

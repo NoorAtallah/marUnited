@@ -51,7 +51,7 @@ const CategoriesSection = () => {
         titleRef.current.children,
         {
           opacity: 0,
-          y: 40
+          y: 30
         },
         {
           opacity: 1,
@@ -71,15 +71,15 @@ const CategoriesSection = () => {
         cardsRef.current,
         {
           opacity: 0,
-          y: 80,
-          scale: 0.9
+          y: 50,
+          scale: 0.95
         },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 1,
-          stagger: 0.15,
+          duration: 0.9,
+          stagger: 0.12,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -100,20 +100,20 @@ const CategoriesSection = () => {
     const content = card.querySelector('.category-content');
 
     gsap.to(card, {
-      y: -12,
-      duration: 0.5,
+      y: -8,
+      duration: 0.4,
       ease: 'power2.out'
     });
 
     gsap.to(image, {
-      scale: 1.1,
-      duration: 0.6,
+      scale: 1.08,
+      duration: 0.5,
       ease: 'power2.out'
     });
 
     gsap.to(content, {
-      y: -6,
-      duration: 0.4,
+      y: -4,
+      duration: 0.3,
       ease: 'power2.out'
     });
   };
@@ -127,43 +127,43 @@ const CategoriesSection = () => {
 
     gsap.to(card, {
       y: 0,
-      duration: 0.5,
+      duration: 0.4,
       ease: 'power2.out'
     });
 
     gsap.to(image, {
       scale: 1,
-      duration: 0.6,
+      duration: 0.5,
       ease: 'power2.out'
     });
 
     gsap.to(content, {
       y: 0,
-      duration: 0.4,
+      duration: 0.3,
       ease: 'power2.out'
     });
   };
 
   return (
     <div 
-      className="relative w-full py-20 md:py-32 overflow-hidden"
+      className="relative w-full py-12 md:py-16 overflow-hidden"
       style={{
-        background: 'linear-gradient(180deg, #ffffff 0%, #F6F4F7 50%, #ffffff 100%)'
+        background: 'linear-gradient(180deg, #ffffff 0%, #ffe3e8 50%, #ffffff 100%)'
       }}
     >
-      <div className="relative max-w-7xl mx-auto px-4 md:px-8">
+      <div className="relative max-w-6xl mx-auto px-4 md:px-6">
         {/* Header */}
-        <div ref={titleRef} className="text-center mb-12 md:mb-16">
+        <div ref={titleRef} className="text-center mb-8 md:mb-10">
           <div 
-            className="text-xs md:text-sm font-bold tracking-[0.3em] uppercase mb-4"
-            style={{ color: '#cbc2d7' }}
+            className="text-xs font-bold tracking-[0.25em] uppercase mb-2"
+            style={{ color: '#cc878e' }}
           >
             Shop By Category
           </div>
           <h2 
-            className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight"
+            className="text-3xl md:text-4xl lg:text-5xl font-black mb-3 leading-tight"
             style={{ 
-              background: 'linear-gradient(135deg, #1a1a2e 0%, #cbc2d7 100%)',
+              background: 'linear-gradient(135deg, #94545c 0%, #cc878e 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text'
@@ -172,15 +172,15 @@ const CategoriesSection = () => {
             Explore Our Collections
           </h2>
           <p 
-            className="text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
-            style={{ color: '#1a1a2e', opacity: 0.6 }}
+            className="text-sm md:text-base max-w-xl mx-auto leading-relaxed"
+            style={{ color: '#94545c', opacity: 0.7 }}
           >
             Discover your perfect skincare routine with our curated Dead Sea mineral collections
           </p>
         </div>
 
-        {/* Categories Grid - MATCHING PRODUCTS LAYOUT */}
-        <div ref={sectionRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Categories Grid */}
+        <div ref={sectionRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
           {categories.map((category, idx) => {
             const Icon = category.icon;
             const isHovered = hoveredIndex === idx;
@@ -195,17 +195,17 @@ const CategoriesSection = () => {
               >
                 {/* Card */}
                 <div 
-                  className="relative bg-white rounded-2xl overflow-hidden transition-all duration-500"
+                  className="relative bg-white rounded-xl overflow-hidden transition-all duration-500"
                   style={{
                     boxShadow: isHovered 
-                      ? '0 25px 50px rgba(203,194,215,0.4)'
-                      : '0 10px 30px rgba(0,0,0,0.08)',
+                      ? '0 15px 35px rgba(204,135,142,0.3)'
+                      : '0 8px 20px rgba(0,0,0,0.06)',
                     border: '1px solid',
-                    borderColor: isHovered ? '#cbc2d7' : 'rgba(203,194,215,0.15)'
+                    borderColor: isHovered ? '#cc878e' : 'rgba(204,135,142,0.15)'
                   }}
                 >
                   {/* Image Container */}
-                  <div className="relative h-72 overflow-hidden bg-gray-50">
+                  <div className="relative h-48 overflow-hidden bg-gray-50">
                     <img 
                       src={category.image}
                       alt={category.title}
@@ -223,10 +223,10 @@ const CategoriesSection = () => {
 
                     {/* Badge */}
                     <div 
-                      className="absolute top-4 left-4 px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-sm"
+                      className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold backdrop-blur-sm"
                       style={{
-                        background: 'rgba(203,194,215,0.9)',
-                        color: '#1a1a2e'
+                        background: 'rgba(204,135,142,0.9)',
+                        color: '#ffffff'
                       }}
                     >
                       {category.badge}
@@ -234,33 +234,33 @@ const CategoriesSection = () => {
 
                     {/* Icon */}
                     <div 
-                      className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300"
+                      className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300"
                       style={{
                         background: 'rgba(255,255,255,0.9)'
                       }}
                     >
                       <Icon 
-                        size={20}
+                        size={16}
                         style={{ 
-                          color: '#cbc2d7',
-                          strokeWidth: 2
+                          color: '#cc878e',
+                          strokeWidth: 2.5
                         }}
                       />
                     </div>
 
                     {/* Quick View on Hover */}
                     <div 
-                      className="absolute inset-x-4 bottom-4 transition-all duration-400"
+                      className="absolute inset-x-3 bottom-3 transition-all duration-400"
                       style={{
                         opacity: isHovered ? 1 : 0,
                         transform: isHovered ? 'translateY(0)' : 'translateY(10px)'
                       }}
                     >
                       <button 
-                        className="w-full py-2.5 rounded-xl text-sm font-bold backdrop-blur-md transition-all duration-300"
+                        className="w-full py-2 rounded-lg text-xs font-bold backdrop-blur-md transition-all duration-300"
                         style={{
-                          background: 'rgba(203,194,215,0.95)',
-                          color: '#1a1a2e',
+                          background: 'rgba(0,201,187,0.95)',
+                          color: '#ffffff',
                           border: '1px solid rgba(255,255,255,0.3)'
                         }}
                       >
@@ -270,25 +270,25 @@ const CategoriesSection = () => {
                   </div>
 
                   {/* Content */}
-                  <div className="category-content p-5">
+                  <div className="category-content p-4">
                     {/* Count */}
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-xs font-medium" style={{ color: '#cbc2d7' }}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xs font-medium" style={{ color: '#cc878e' }}>
                         {category.count} Products
                       </span>
                     </div>
 
                     {/* Title */}
-                    <div className="mb-3">
+                    <div className="mb-2">
                       <div 
-                        className="text-xs font-bold tracking-wider uppercase mb-1"
-                        style={{ color: '#cbc2d7' }}
+                        className="text-xs font-bold tracking-wider uppercase mb-0.5"
+                        style={{ color: '#cc878e' }}
                       >
                         {category.subtitle}
                       </div>
                       <h3 
-                        className="text-lg font-black leading-tight"
-                        style={{ color: '#1a1a2e' }}
+                        className="text-base font-black leading-tight"
+                        style={{ color: '#94545c' }}
                       >
                         {category.title}
                       </h3>
@@ -296,9 +296,9 @@ const CategoriesSection = () => {
 
                     {/* Description */}
                     <p 
-                      className="text-xs mb-4"
+                      className="text-xs mb-3"
                       style={{
-                        color: '#1a1a2e',
+                        color: '#94545c',
                         opacity: 0.7
                       }}
                     >
@@ -310,7 +310,7 @@ const CategoriesSection = () => {
                       <span 
                         className="text-sm font-bold"
                         style={{ 
-                          background: 'linear-gradient(135deg, #1a1a2e, #cbc2d7)',
+                          background: 'linear-gradient(135deg, #94545c, #cc878e)',
                           WebkitBackgroundClip: 'text',
                           WebkitTextFillColor: 'transparent',
                           backgroundClip: 'text'
@@ -320,19 +320,19 @@ const CategoriesSection = () => {
                       </span>
 
                       <button 
-                        className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-400"
+                        className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-400"
                         style={{
                           background: isHovered 
-                            ? 'linear-gradient(135deg, #cbc2d7, #F6F4F7)'
-                            : 'rgba(203,194,215,0.1)',
+                            ? '#00c9bb'
+                            : 'rgba(204,135,142,0.1)',
                           transform: isHovered ? 'scale(1.05)' : 'scale(1)'
                         }}
                       >
                         <ArrowRight 
-                          size={20}
+                          size={16}
                           style={{ 
-                            color: isHovered ? '#1a1a2e' : '#cbc2d7',
-                            strokeWidth: 2
+                            color: isHovered ? '#ffffff' : '#cc878e',
+                            strokeWidth: 2.5
                           }}
                         />
                       </button>
@@ -345,18 +345,18 @@ const CategoriesSection = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-12 md:mt-16">
+        <div className="text-center mt-8 md:mt-10">
           <button 
-            className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 rounded-full font-bold text-sm md:text-base transition-all duration-500 hover:scale-105"
+            className="group inline-flex items-center gap-2 px-8 py-3 rounded-full font-bold text-sm transition-all duration-500 hover:scale-105"
             style={{
-              background: 'linear-gradient(135deg, #cbc2d7, #F6F4F7)',
-              color: '#1a1a2e',
-              boxShadow: '0 20px 40px rgba(203,194,215,0.4)'
+              background: 'linear-gradient(135deg, #00c9bb, #00d4c7)',
+              color: '#ffffff',
+              boxShadow: '0 15px 30px rgba(0,201,187,0.3)'
             }}
           >
             View All Collections
             <ArrowRight 
-              size={20}
+              size={18}
               className="transition-transform duration-500 group-hover:translate-x-2"
             />
           </button>

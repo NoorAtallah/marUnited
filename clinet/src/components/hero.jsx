@@ -70,6 +70,19 @@ const AnimatedSections = ({
   const contentRefs = useRef([]);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Preload images
   useEffect(() => {
@@ -94,8 +107,9 @@ const AnimatedSections = ({
     preloadImages();
   }, [sections]);
 
+  // Desktop animation function
   const gotoSection = useCallback((index, direction) => {
-    if (!containerRef.current || animatingRef.current) return;
+    if (!containerRef.current || animatingRef.current || isMobile) return;
 
     const sectionsElements = sectionsRefs.current;
     const images = imagesRefs.current;
@@ -123,7 +137,7 @@ const AnimatedSections = ({
 
     timelineRef.current = tl;
 
-    // Set z-index for proper stacking - new section on top
+    // Set z-index for proper stacking
     gsap.set(sectionsElements, { zIndex: 1 });
     gsap.set(sectionsElements[index], { zIndex: 10 });
     if (currentIndexRef.current >= 0) {
@@ -152,7 +166,7 @@ const AnimatedSections = ({
         }, 0);
     }
 
-    // Animate in new section - synchronized to prevent gaps
+    // Animate in new section
     tl.to(
       outerWrappers[index],
       { xPercent: 0, ease: 'power2.inOut', duration: 1.0 },
@@ -183,61 +197,64 @@ const AnimatedSections = ({
 
     currentIndexRef.current = index;
     setCurrentIndex(index);
-  }, []);
+  }, [isMobile]);
 
-  // Handle wheel events
+  // Simple mobile slide function
+  const goToSlide = useCallback((index) => {
+    if (index < 0 || index >= sections.length) return;
+    setCurrentIndex(index);
+    currentIndexRef.current = index;
+  }, [sections.length]);
+
+  // Handle wheel events (desktop only)
   const handleWheel = useCallback((e) => {
-    if (animatingRef.current) {
-      e.preventDefault();
-      return;
-    }
+    if (animatingRef.current || isMobile) return;
 
     const delta = Math.sign(e.deltaY);
     
     if (delta > 0 && currentIndexRef.current < sections.length - 1) {
-      // Scrolling down - go to next section
       e.preventDefault();
       gotoSection(currentIndexRef.current + 1, 1);
     } else if (delta < 0 && currentIndexRef.current > 0) {
-      // Scrolling up - go to previous section
       e.preventDefault();
       gotoSection(currentIndexRef.current - 1, -1);
     }
-  }, [sections.length, gotoSection]);
+  }, [sections.length, gotoSection, isMobile]);
 
-  // Handle touch events for mobile
-  const touchStartY = useRef(0);
-  
+  // Touch handlers for mobile swipe
   const handleTouchStart = useCallback((e) => {
-    touchStartY.current = e.touches[0].clientY;
+    touchStartX.current = e.touches[0].clientX;
   }, []);
 
-  const handleTouchEnd = useCallback((e) => {
-    if (animatingRef.current) return;
+  const handleTouchMove = useCallback((e) => {
+    touchEndX.current = e.touches[0].clientX;
+  }, []);
 
-    const touchEndY = e.changedTouches[0].clientY;
-    const diff = touchStartY.current - touchEndY;
+  const handleTouchEnd = useCallback(() => {
+    if (!isMobile) return;
+    
     const swipeThreshold = 50;
+    const diff = touchStartX.current - touchEndX.current;
 
     if (Math.abs(diff) > swipeThreshold) {
-      if (diff > 0 && currentIndexRef.current < sections.length - 1) {
-        // Swipe down - go to next section
-        gotoSection(currentIndexRef.current + 1, 1);
-      } else if (diff < 0 && currentIndexRef.current > 0) {
-        // Swipe up - go to previous section
-        gotoSection(currentIndexRef.current - 1, -1);
+      if (diff > 0 && currentIndex < sections.length - 1) {
+        // Swipe left - next slide
+        goToSlide(currentIndex + 1);
+      } else if (diff < 0 && currentIndex > 0) {
+        // Swipe right - previous slide
+        goToSlide(currentIndex - 1);
       }
     }
-  }, [sections.length, gotoSection]);
+  }, [currentIndex, sections.length, goToSlide, isMobile]);
 
-  // Setup effects
+  // Setup desktop animations
   useEffect(() => {
-    if (!containerRef.current || !imagesLoaded) return;
+    if (!containerRef.current || !imagesLoaded || isMobile) return;
 
     const outerWrappers = outerRefs.current;
     const innerWrappers = innerRefs.current;
 
-    // Initialize positions - hide all sections initially
+    // Initialize positions for desktop
     gsap.set(outerWrappers, { xPercent: 100 });
     gsap.set(innerWrappers, { xPercent: -100 });
     gsap.set(sectionsRefs.current, { autoAlpha: 0 });
@@ -245,61 +262,187 @@ const AnimatedSections = ({
     // Add event listeners
     const container = containerRef.current;
     container.addEventListener('wheel', handleWheel, { passive: false });
-    container.addEventListener('touchstart', handleTouchStart, { passive: true });
-    container.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     // Initial animation - show first section
     gotoSection(0, 1);
 
     return () => {
       container.removeEventListener('wheel', handleWheel);
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchend', handleTouchEnd);
       
       if (timelineRef.current) {
         timelineRef.current.kill();
       }
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  }, [imagesLoaded, gotoSection, handleWheel, handleTouchStart, handleTouchEnd]);
-
-  const gradientOverlay = useMemo(() => ({
-    background: 'linear-gradient(135deg, rgba(26,26,46,0.8) 0%, rgba(203,194,215,0.3) 50%, transparent 100%)'
-  }), []);
+  }, [imagesLoaded, gotoSection, handleWheel, isMobile]);
 
   const navButtonStyle = useMemo(() => ({
-    background: 'linear-gradient(135deg, #cbc2d7, #F6F4F7)',
-    color: '#1a1a2e',
-    boxShadow: '0 10px 30px rgba(203,194,215,0.4)'
+    background: 'linear-gradient(135deg, #00c9bb, #ffe3e8)',
+    color: '#94545c',
+    boxShadow: '0 10px 30px rgba(0,201,187,0.4)'
   }), []);
 
   const disabledButtonStyle = useMemo(() => ({
-    background: 'rgba(203,194,215,0.2)',
-    color: 'rgba(26,26,46,0.5)',
+    background: 'rgba(204,135,142,0.2)',
+    color: 'rgba(148,84,92,0.5)',
     cursor: 'not-allowed'
   }), []);
 
+  // Mobile Slider Render
+  if (isMobile) {
+    return (
+      <div 
+        className="relative w-full h-screen overflow-hidden"
+        style={{ background: '#94545c' }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Mobile Slides Container */}
+        <div 
+          className="flex h-full transition-transform duration-300 ease-out"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {sections.map((section, i) => (
+            <div key={i} className="w-full h-full flex-shrink-0 relative">
+              {/* Background Image */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center"
+                style={{
+                  backgroundImage: `url("${section.img}")`,
+                  filter: 'brightness(0.4) contrast(1.1)'
+                }}
+              />
+              
+              {/* Gradient Overlay */}
+              <div 
+                className="absolute inset-0"
+                style={{
+                  background: 'linear-gradient(to bottom, rgba(148,84,92,0.7) 0%, transparent 50%, rgba(148,84,92,0.9) 100%)'
+                }}
+              />
+
+              {/* Content */}
+              <div className="relative h-full flex flex-col justify-between px-4 py-20">
+                {/* Top Content */}
+                <div className="mt-8">
+                  <div className="text-xs font-bold tracking-[0.2em] uppercase mb-2" style={{ color: '#00c9bb' }}>
+                    {section.subtitle}
+                  </div>
+                  <h2 className="text-3xl font-black mb-3" style={{ color: '#ffe3e8' }}>
+                    {section.text}
+                  </h2>
+                  <p className="text-sm leading-relaxed mb-4" style={{ color: '#ffe3e8', opacity: 0.9 }}>
+                    {section.description}
+                  </p>
+                  
+                  {/* Rating */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex gap-0.5">
+                      {[...Array(5)].map((_, idx) => (
+                        <span key={idx} className="text-base" style={{ color: idx < Math.floor(section.rating) ? '#FFD700' : 'rgba(255,215,0,0.2)' }}>
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                    <span className="text-xs font-medium" style={{ color: '#00c9bb' }}>
+                      {section.rating} ({section.reviews.toLocaleString()})
+                    </span>
+                  </div>
+                </div>
+
+                {/* Product Image */}
+                <div className="my-6">
+                  <div 
+                    className="w-full max-w-[250px] mx-auto aspect-square rounded-2xl overflow-hidden"
+                    style={{
+                      border: '1px solid rgba(0,201,187,0.3)',
+                      boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
+                    }}
+                  >
+                    <img 
+                      src={section.img} 
+                      alt={section.text}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+
+                {/* Bottom Content - Price and Button */}
+                <div className="flex items-center justify-between">
+                  <div className="text-3xl font-black" style={{ color: '#ffe3e8' }}>
+                    {section.price}
+                  </div>
+                  <button 
+                    className="px-6 py-2.5 rounded-full text-sm font-bold uppercase"
+                    style={navButtonStyle}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile Dots Indicator */}
+        <div className="absolute bottom-24 left-0 right-0 flex justify-center gap-2">
+          {sections.map((_, i) => (
+            <button
+              key={i}
+              className="w-2 h-2 rounded-full transition-all duration-300"
+              style={{
+                background: i === currentIndex ? '#00c9bb' : 'rgba(255,227,232,0.3)',
+                transform: i === currentIndex ? 'scale(1.5)' : 'scale(1)'
+              }}
+              onClick={() => goToSlide(i)}
+            />
+          ))}
+        </div>
+
+        {/* Mobile Navigation Arrows */}
+        <button
+          className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center"
+          style={currentIndex === 0 ? disabledButtonStyle : { ...navButtonStyle, opacity: 0.8 }}
+          onClick={() => currentIndex > 0 && goToSlide(currentIndex - 1)}
+          disabled={currentIndex === 0}
+        >
+          ‹
+        </button>
+        <button
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center"
+          style={currentIndex === sections.length - 1 ? disabledButtonStyle : { ...navButtonStyle, opacity: 0.8 }}
+          onClick={() => currentIndex < sections.length - 1 && goToSlide(currentIndex + 1)}
+          disabled={currentIndex === sections.length - 1}
+        >
+          ›
+        </button>
+      </div>
+    );
+  }
+
+  // Desktop Render (Original)
   return (
     <div 
       ref={containerRef}
       className={`font-sans relative ${className}`}
       style={{ 
-        background: '#1a1a2e',
+        background: '#94545c',
         height: '100vh',
         overflow: 'hidden'
       }}
     >
-      {/* Progress Indicator - HIGHEST z-index */}
+      {/* Progress Indicator */}
       <div 
-        className="absolute top-[100px] left-4 md:left-8 flex flex-col gap-2 md:gap-3"
+        className="absolute top-[100px] left-8 flex flex-col gap-3"
         style={{ zIndex: 100, pointerEvents: 'auto' }}
       >
         {sections.map((_, i) => (
           <button
             key={i}
-            className="w-0.5 md:w-1 h-8 md:h-12 rounded-full transition-all duration-500 cursor-pointer focus:outline-none"
+            className="w-1 h-12 rounded-full transition-all duration-500 cursor-pointer focus:outline-none"
             style={{
-              background: i === currentIndex ? 'linear-gradient(180deg, #cbc2d7, #F6F4F7)' : 'rgba(203,194,215,0.2)',
+              background: i === currentIndex ? 'linear-gradient(180deg, #00c9bb, #ffe3e8)' : 'rgba(255,227,232,0.2)',
               transform: i === currentIndex ? 'scaleY(1.3)' : 'scaleY(1)',
             }}
             onClick={() => {
@@ -313,9 +456,9 @@ const AnimatedSections = ({
         ))}
       </div>
 
-      {/* Navigation - HIGHEST z-index */}
+      {/* Navigation */}
       <nav 
-        className="absolute bottom-4 md:bottom-8 left-0 right-0 flex justify-center items-center gap-3 md:gap-8 px-4"
+        className="absolute bottom-8 left-0 right-0 flex justify-center items-center gap-8 px-4"
         style={{ zIndex: 100, pointerEvents: 'auto' }}
         aria-label="Product navigation"
       >
@@ -325,44 +468,38 @@ const AnimatedSections = ({
               gotoSection(currentIndexRef.current - 1, -1);
             }
           }}
-          className="w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center text-lg md:text-2xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1a1a2e] disabled:hover:scale-100"
+          className="w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all duration-300 hover:scale-110"
           style={currentIndex === 0 ? disabledButtonStyle : navButtonStyle}
-          aria-label="Previous product"
           disabled={currentIndex === 0}
         >
           ←
         </button>
 
-        <div className="flex gap-2 md:gap-4 overflow-x-auto max-w-[60vw] md:max-w-none scrollbar-hide">
+        <div className="flex gap-4">
           {sections.map((section, i) => (
             <button
               key={i}
-              className="relative group flex-shrink-0 focus:outline-none"
+              className="relative group flex-shrink-0"
               onClick={() => {
                 if (currentIndex !== i && !animatingRef.current) {
                   const direction = i > currentIndex ? 1 : -1;
                   gotoSection(i, direction);
                 }
               }}
-              aria-label={`Go to ${section.text}`}
             >
               <div 
-                className="w-12 h-12 md:w-20 md:h-20 rounded-xl md:rounded-2xl overflow-hidden transition-all duration-500 group-hover:scale-110 relative"
+                className="w-20 h-20 rounded-2xl overflow-hidden transition-all duration-500 group-hover:scale-110"
                 style={{
-                  border: currentIndex === i ? '3px solid #cbc2d7' : '3px solid rgba(203,194,215,0.2)',
-                  boxShadow: currentIndex === i ? '0 10px 30px rgba(203,194,215,0.6), 0 0 0 4px rgba(203,194,215,0.1)' : 'none',
-                  transform: currentIndex === i ? 'translateY(-4px) md:translateY(-8px)' : 'translateY(0)',
+                  border: currentIndex === i ? '3px solid #00c9bb' : '3px solid rgba(255,227,232,0.2)',
+                  boxShadow: currentIndex === i ? '0 10px 30px rgba(0,201,187,0.6)' : 'none',
+                  transform: currentIndex === i ? 'translateY(-8px)' : 'translateY(0)',
                 }}
               >
                 <img
                   src={section.img}
                   alt={section.text}
                   className="w-full h-full object-cover"
-                  loading="lazy"
                 />
-                {currentIndex === i && (
-                  <div className="absolute inset-0" style={{ background: 'linear-gradient(45deg, rgba(203,194,215,0.3), transparent)' }} />
-                )}
               </div>
             </button>
           ))}
@@ -374,30 +511,22 @@ const AnimatedSections = ({
               gotoSection(currentIndexRef.current + 1, 1);
             }
           }}
-          className="w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center text-lg md:text-2xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1a1a2e] disabled:hover:scale-100"
+          className="w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all duration-300 hover:scale-110"
           style={currentIndex === sections.length - 1 ? disabledButtonStyle : navButtonStyle}
-          aria-label="Next product"
           disabled={currentIndex === sections.length - 1}
         >
           →
         </button>
       </nav>
 
-      {/* Sections Container - LOWER z-index */}
-      <div className="relative w-full h-full" style={{ zIndex: 1, background: '#1a1a2e' }}>
+      {/* Desktop Sections Container */}
+      <div className="relative w-full h-full" style={{ zIndex: 1 }}>
         {sections.map((section, i) => (
           <section 
             key={i} 
             className="absolute top-0 left-0 w-full h-full"
-            ref={(el) => { 
-              if (el) {
-                sectionsRefs.current[i] = el;
-              }
-            }}
-            style={{ 
-              visibility: 'visible',
-              zIndex: i === currentIndex ? 10 : 1
-            }}
+            ref={(el) => { if (el) sectionsRefs.current[i] = el; }}
+            style={{ visibility: 'visible', zIndex: i === currentIndex ? 10 : 1 }}
           >
             <div className="outer w-full h-full overflow-hidden" ref={(el) => { if (el) outerRefs.current[i] = el; }}>
               <div className="inner w-full h-full overflow-hidden" ref={(el) => { if (el) innerRefs.current[i] = el; }}>
@@ -408,43 +537,42 @@ const AnimatedSections = ({
                   style={{
                     backgroundImage: `url("${section.img}")`,
                     filter: 'brightness(0.4) contrast(1.1)',
-                    backgroundPosition: 'center',
                   }}
                 />
 
-                <div className="absolute inset-0" style={gradientOverlay} />
+                <div className="absolute inset-0" style={{
+                  background: 'linear-gradient(135deg, rgba(148,84,92,0.8) 0%, rgba(204,135,142,0.3) 50%, transparent 100%)'
+                }} />
 
                 {/* Content */}
-                <div className="absolute inset-0 flex items-center justify-center px-4 md:px-8 lg:px-16 py-20 md:py-0">
+                <div className="absolute inset-0 flex items-center justify-center px-16">
                   <div 
                     className="max-w-6xl w-full"
                     ref={(el) => { if (el) contentRefs.current[i] = el; }}
                   >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 items-center">
-                      {/* Left: Product Image - Now with the actual image */}
-                      <div className="relative order-2 md:order-1">
-                        <div className="relative w-full max-w-[280px] md:max-w-md mx-auto aspect-square rounded-xl md:rounded-2xl overflow-hidden" style={{
-                          border: '1px solid rgba(255,255,255,0.15)',
-                          boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
-                          background: 'transparent'
+                    <div className="grid grid-cols-2 gap-12 items-center">
+                      {/* Left: Product Image */}
+                      <div className="relative">
+                        <div className="relative w-full max-w-md mx-auto aspect-square rounded-2xl overflow-hidden" style={{
+                          border: '1px solid rgba(0,201,187,0.3)',
+                          boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
                         }}>
                           <img 
                             src={section.img} 
                             alt={section.text}
                             className="w-full h-full object-cover"
-                            loading="lazy"
                           />
                         </div>
                       </div>
 
                       {/* Right: Product Info */}
-                      <div className="space-y-3 md:space-y-6 order-1 md:order-2 text-center md:text-left">
-                        <div className="text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase" style={{ color: '#cbc2d7', opacity: 0.8 }}>
+                      <div className="space-y-6">
+                        <div className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: '#00c9bb' }}>
                           {section.subtitle}
                         </div>
 
-                        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight" style={{ 
-                          background: 'linear-gradient(135deg, #F6F4F7 0%, #cbc2d7 100%)',
+                        <h2 className="text-6xl font-black leading-tight" style={{ 
+                          background: 'linear-gradient(135deg, #ffe3e8 0%, #00c9bb 100%)',
                           WebkitBackgroundClip: 'text',
                           WebkitTextFillColor: 'transparent',
                           backgroundClip: 'text'
@@ -452,35 +580,33 @@ const AnimatedSections = ({
                           {section.text}
                         </h2>
 
-                        <p className="text-sm md:text-base leading-relaxed max-w-md mx-auto md:mx-0" style={{ color: '#F6F4F7', opacity: 0.7 }}>
+                        <p className="text-base leading-relaxed" style={{ color: '#ffe3e8', opacity: 0.8 }}>
                           {section.description}
                         </p>
 
-                        <div className="flex items-center gap-2 md:gap-3 justify-center md:justify-start">
-                          <div className="flex gap-0.5 md:gap-1" aria-label={`${section.rating} out of 5 stars`}>
+                        <div className="flex items-center gap-3">
+                          <div className="flex gap-1">
                             {[...Array(5)].map((_, idx) => (
-                              <span key={idx} className="text-base md:text-lg" style={{ color: idx < Math.floor(section.rating) ? '#FFD700' : 'rgba(255,215,0,0.2)' }} aria-hidden="true">
+                              <span key={idx} className="text-lg" style={{ color: idx < Math.floor(section.rating) ? '#FFD700' : 'rgba(255,215,0,0.2)' }}>
                                 ★
                               </span>
                             ))}
                           </div>
-                          <span className="text-[10px] md:text-xs font-medium" style={{ color: '#cbc2d7', opacity: 0.7 }}>
+                          <span className="text-xs font-medium" style={{ color: '#00c9bb' }}>
                             {section.rating} ({section.reviews.toLocaleString()})
                           </span>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-5 pt-2 justify-center md:justify-start">
-                          <div className="text-3xl md:text-4xl font-black" style={{ 
-                            background: 'linear-gradient(135deg, #F6F4F7, #cbc2d7)',
+                        <div className="flex items-center gap-5 pt-2">
+                          <div className="text-4xl font-black" style={{ 
+                            background: 'linear-gradient(135deg, #ffe3e8, #00c9bb)',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             backgroundClip: 'text'
                           }}>
                             {section.price}
                           </div>
-                          <button className="px-6 md:px-8 py-2.5 md:py-3 rounded-full text-xs md:text-sm font-bold uppercase transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1a1a2e]" style={{ 
-                            ...navButtonStyle,
-                          }}>
+                          <button className="px-8 py-3 rounded-full text-sm font-bold uppercase transition-all duration-300 hover:scale-105" style={navButtonStyle}>
                             Add to Cart
                           </button>
                         </div>
@@ -493,17 +619,6 @@ const AnimatedSections = ({
           </section>
         ))}
       </div>
-
-      <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
     </div>
   );
 };

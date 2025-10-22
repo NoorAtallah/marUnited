@@ -23,18 +23,16 @@ const AnimatedTestimonials = ({
     return index === active;
   };
 
-  // Autoplay removed
-
   const randomRotateY = () => {
     return Math.floor(Math.random() * 21) - 10;
   };
 
   return (
-    <div className={`max-w-sm md:max-w-4xl mx-auto px-4 md:px-8 lg:px-12 py-20 ${className}`}>
-      <div className="relative grid grid-cols-1 md:grid-cols-2 gap-20">
+    <div className={`max-w-sm md:max-w-3xl lg:max-w-5xl mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 ${className}`}>
+      <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16">
         {/* Images Stack */}
         <div>
-          <div className="relative h-80 w-full">
+          <div className="relative h-64 md:h-80 lg:h-96 w-full">
             <AnimatePresence>
               {testimonials.map((testimonial, index) => (
                 <motion.div
@@ -71,7 +69,10 @@ const AnimatedTestimonials = ({
                     src={testimonial.src}
                     alt={testimonial.name}
                     draggable={false}
-                    className="h-full w-full rounded-3xl object-cover object-center"
+                    className="h-full w-full rounded-2xl object-cover object-center"
+                    style={{
+                      boxShadow: '0 15px 35px rgba(204,135,142,0.3)'
+                    }}
                   />
                 </motion.div>
               ))}
@@ -80,7 +81,7 @@ const AnimatedTestimonials = ({
         </div>
 
         {/* Content */}
-        <div className="flex justify-between flex-col py-4">
+        <div className="flex justify-between flex-col py-2 md:py-4">
           <motion.div
             key={active}
             initial={{
@@ -101,9 +102,9 @@ const AnimatedTestimonials = ({
             }}
           >
             <h3 
-              className="text-2xl font-bold mb-2"
+              className="text-xl md:text-2xl lg:text-3xl font-black mb-1 md:mb-2"
               style={{ 
-                background: 'linear-gradient(135deg, #1a1a2e 0%, #cbc2d7 100%)',
+                background: 'linear-gradient(135deg, #94545c 0%, #cc878e 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text'
@@ -112,12 +113,15 @@ const AnimatedTestimonials = ({
               {testimonials[active].name}
             </h3>
             <p 
-              className="text-sm mb-8"
-              style={{ color: '#cbc2d7' }}
+              className="text-xs md:text-sm mb-4 md:mb-6 lg:mb-8 font-medium"
+              style={{ color: '#cc878e' }}
             >
               {testimonials[active].designation}
             </p>
-            <motion.p className="text-lg leading-relaxed" style={{ color: '#1a1a2e', opacity: 0.8 }}>
+            <motion.p 
+              className="text-sm md:text-base lg:text-lg leading-relaxed" 
+              style={{ color: '#94545c', opacity: 0.85 }}
+            >
               {testimonials[active].quote.split(" ").map((word, index) => (
                 <motion.span
                   key={index}
@@ -145,33 +149,33 @@ const AnimatedTestimonials = ({
           </motion.div>
 
           {/* Navigation */}
-          <div className="flex gap-4 pt-12 md:pt-0">
+          <div className="flex gap-3 pt-8 md:pt-10 lg:pt-0">
             <button
               onClick={handlePrev}
-              className="h-10 w-10 rounded-full flex items-center justify-center group transition-all duration-300 hover:scale-110"
+              className="h-9 w-9 md:h-10 md:w-10 rounded-full flex items-center justify-center group transition-all duration-300 hover:scale-110"
               style={{
-                background: 'linear-gradient(135deg, #cbc2d7, #F6F4F7)',
-                boxShadow: '0 4px 12px rgba(203,194,215,0.3)'
+                background: 'linear-gradient(135deg, #cc878e, #ffe3e8)',
+                boxShadow: '0 4px 12px rgba(204,135,142,0.3)'
               }}
             >
               <ArrowLeft 
-                size={20}
-                className="transition-transform duration-300 group-hover:rotate-12"
-                style={{ color: '#1a1a2e' }}
+                size={18}
+                className="transition-transform duration-300 group-hover:-translate-x-1"
+                style={{ color: '#ffffff', strokeWidth: 2.5 }}
               />
             </button>
             <button
               onClick={handleNext}
-              className="h-10 w-10 rounded-full flex items-center justify-center group transition-all duration-300 hover:scale-110"
+              className="h-9 w-9 md:h-10 md:w-10 rounded-full flex items-center justify-center group transition-all duration-300 hover:scale-110"
               style={{
-                background: 'linear-gradient(135deg, #cbc2d7, #F6F4F7)',
-                boxShadow: '0 4px 12px rgba(203,194,215,0.3)'
+                background: 'linear-gradient(135deg, #00c9bb, #00d4c7)',
+                boxShadow: '0 4px 12px rgba(0,201,187,0.3)'
               }}
             >
               <ArrowRight 
-                size={20}
-                className="transition-transform duration-300 group-hover:-rotate-12"
-                style={{ color: '#1a1a2e' }}
+                size={18}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+                style={{ color: '#ffffff', strokeWidth: 2.5 }}
               />
             </button>
           </div>
@@ -212,24 +216,24 @@ const TestimonialsSection = () => {
 
   return (
     <div 
-      className="relative w-full py-20 md:py-32 overflow-hidden"
+      className="relative w-full py-12 md:py-16 lg:py-20 overflow-hidden"
       style={{
-        background: 'linear-gradient(180deg, #ffffff 0%, #F6F4F7 100%)'
+        background: 'linear-gradient(180deg, #ffffff 0%, #ffe3e8 100%)'
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <div className="max-w-6xl mx-auto px-4 md:px-6">
         {/* Header */}
-        <div className="text-center mb-12 md:mb-16">
+        <div className="text-center mb-8 md:mb-10 lg:mb-12">
           <div 
-            className="text-xs md:text-sm font-bold tracking-[0.3em] uppercase mb-4"
-            style={{ color: '#cbc2d7' }}
+            className="text-xs font-bold tracking-[0.25em] uppercase mb-2"
+            style={{ color: '#cc878e' }}
           >
             Customer Reviews
           </div>
           <h2 
-            className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight"
+            className="text-3xl md:text-4xl lg:text-5xl font-black mb-3 leading-tight"
             style={{ 
-              background: 'linear-gradient(135deg, #1a1a2e 0%, #cbc2d7 100%)',
+              background: 'linear-gradient(135deg, #94545c 0%, #cc878e 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text'
@@ -238,8 +242,8 @@ const TestimonialsSection = () => {
             Loved By Thousands
           </h2>
           <p 
-            className="text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
-            style={{ color: '#1a1a2e', opacity: 0.6 }}
+            className="text-sm md:text-base max-w-xl mx-auto leading-relaxed px-4"
+            style={{ color: '#94545c', opacity: 0.7 }}
           >
             Real stories from real customers who transformed their skincare routine with our Dead Sea products
           </p>

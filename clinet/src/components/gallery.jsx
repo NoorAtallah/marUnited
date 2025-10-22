@@ -63,7 +63,7 @@ function createTextTexture(gl, text, font = "bold 30px monospace", color = "blac
 }
 
 class Title {
-  constructor({ gl, plane, renderer, text, textColor = "#545050", font = "30px sans-serif" }) {
+  constructor({ gl, plane, renderer, text, textColor = "#94545c", font = "bold 24px sans-serif" }) {
     autoBind(this);
     this.gl = gl;
     this.plane = plane;
@@ -137,6 +137,7 @@ class Media {
     this.speed = 0;
     this.isBefore = false;
     this.isAfter = false;
+    this.scroll = { current: 0, last: 0 };
     
     this.createShader();
     this.createMesh();
@@ -247,56 +248,62 @@ class Media {
     } else {
       const B_abs = Math.abs(this.bend);
       const R = (H * H + B_abs * B_abs) / (2 * B_abs);
-      const effectiveX = Math.min(Math.abs(x), H);
-
-      const arc = R - Math.sqrt(R * R - effectiveX * effectiveX);
-      if (this.bend > 0) {
-        this.plane.position.y = -arc;
-        this.plane.rotation.z = -Math.sign(x) * Math.asin(effectiveX / R);
-      } else {
-        this.plane.position.y = arc;
-        this.plane.rotation.z = Math.sign(x) * Math.asin(effectiveX / R);
-      }
+      const theta = Math.asin(x / R);
+      const bendSign = Math.sign(this.bend);
+      this.plane.position.y = bendSign * (R - Math.sqrt(R * R - x * x));
+      this.plane.rotation.z = theta;
     }
 
-    this.speed = scroll.current - scroll.last;
-    this.program.uniforms.uTime.value += 0.04;
+    this.speed = this.scroll.current - this.scroll.last;
     this.program.uniforms.uSpeed.value = this.speed;
+    this.program.uniforms.uTime.value += 0.04;
 
     const planeOffset = this.plane.scale.x / 2;
     const viewportOffset = this.viewport.width / 2;
+    
     this.isBefore = this.plane.position.x + planeOffset < -viewportOffset;
     this.isAfter = this.plane.position.x - planeOffset > viewportOffset;
-    
+
     if (direction === "right" && this.isBefore) {
       this.extra -= this.widthTotal;
-      this.isBefore = this.isAfter = false;
+      this.isBefore = false;
+      this.isAfter = false;
     }
     if (direction === "left" && this.isAfter) {
       this.extra += this.widthTotal;
-      this.isBefore = this.isAfter = false;
+      this.isBefore = false;
+      this.isAfter = false;
     }
+
+    this.scroll = scroll;
   }
 
   onResize({ screen, viewport } = {}) {
     if (screen) this.screen = screen;
     if (viewport) {
       this.viewport = viewport;
-      if (this.plane.program.uniforms.uViewportSizes) {
-        this.plane.program.uniforms.uViewportSizes.value = [
-          this.viewport.width,
-          this.viewport.height,
-        ];
-      }
+      this.plane.program.uniforms.uViewportSizes = { value: [viewport.width, viewport.height] };
     }
-    this.scale = this.screen.height / 1500;
-    this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
-    this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
+
+    // Responsive scaling based on screen size
+    const isMobile = this.screen.width < 768;
+    const isTablet = this.screen.width >= 768 && this.screen.width < 1024;
+    
+    let scaleMultiplier = 1;
+    if (isMobile) {
+      scaleMultiplier = 0.7; // 70% size on mobile
+    } else if (isTablet) {
+      scaleMultiplier = 0.85; // 85% size on tablet
+    }
+
+    this.scale = (this.screen.height / 1500) * scaleMultiplier;
+    this.plane.scale.y = (this.viewport.height * (700 * this.scale)) / this.screen.height;
+    this.plane.scale.x = (this.viewport.width * (550 * this.scale)) / this.screen.width;
     this.plane.program.uniforms.uPlaneSizes.value = [
       this.plane.scale.x,
       this.plane.scale.y,
     ];
-    this.padding = 2;
+    this.padding = isMobile ? 1.5 : 2;
     this.width = this.plane.scale.x + this.padding;
     this.widthTotal = this.width * this.length;
     this.x = this.width * this.index;
@@ -304,7 +311,7 @@ class Media {
 }
 
 class App {
-  constructor(container, { items, bend = 1, textColor = "#ffffff", borderRadius = 0, font = "bold 30px DM Sans" }) {
+  constructor(container, { items, bend = 1, textColor = "#94545c", borderRadius = 0, font = "bold 24px DM Sans" }) {
     this.container = container;
     this.scroll = { ease: 0.08, current: 0, target: 0, last: 0 };
     this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
@@ -481,7 +488,7 @@ class App {
   }
 }
 
-const CircularGallery = ({ items, bend = 3, textColor = "#1a1a2e", borderRadius = 0.05, font = "bold 40px sans-serif" }) => {
+const CircularGallery = ({ items, bend = 3, textColor = "#94545c", borderRadius = 0.05, font = "bold 24px sans-serif" }) => {
   const containerRef = useRef(null);
   
   useEffect(() => {
@@ -499,19 +506,19 @@ const CircularGallery = ({ items, bend = 3, textColor = "#1a1a2e", borderRadius 
   }, [items, bend, textColor, borderRadius, font]);
   
   return (
-    <div className="relative w-full bg-white py-20 md:py-32">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 mb-12">
+    <div className="relative w-full py-12 md:py-16" style={{ background: 'linear-gradient(180deg, #ffe3e8 0%, #ffffff 100%)' }}>
+      <div className="max-w-6xl mx-auto px-4 md:px-6 mb-8 md:mb-10">
         <div className="text-center">
           <div 
-            className="text-xs md:text-sm font-bold tracking-[0.3em] uppercase mb-4"
-            style={{ color: '#cbc2d7' }}
+            className="text-xs font-bold tracking-[0.25em] uppercase mb-2"
+            style={{ color: '#cc878e' }}
           >
             Product Gallery
           </div>
           <h2 
-            className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight"
+            className="text-3xl md:text-4xl lg:text-5xl font-black mb-3 leading-tight"
             style={{ 
-              background: 'linear-gradient(135deg, #1a1a2e 0%, #cbc2d7 100%)',
+              backgroundImage: 'linear-gradient(135deg, #94545c 0%, #cc878e 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text'
@@ -520,8 +527,8 @@ const CircularGallery = ({ items, bend = 3, textColor = "#1a1a2e", borderRadius 
             Experience The Collection
           </h2>
           <p 
-            className="text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
-            style={{ color: '#1a1a2e', opacity: 0.6 }}
+            className="text-sm md:text-base max-w-xl mx-auto leading-relaxed"
+            style={{ color: '#94545c', opacity: 0.7 }}
           >
             Drag or scroll to explore our premium Dead Sea mineral products
           </p>
@@ -530,7 +537,11 @@ const CircularGallery = ({ items, bend = 3, textColor = "#1a1a2e", borderRadius 
       
       <div
         className="w-full cursor-grab active:cursor-grabbing"
-        style={{ height: '600px' }}
+        style={{ 
+          height: '350px',
+          '@media (minWidth: 768px)': { height: '450px' },
+          '@media (minWidth: 1024px)': { height: '500px' }
+        }}
         ref={containerRef}
       />
     </div>

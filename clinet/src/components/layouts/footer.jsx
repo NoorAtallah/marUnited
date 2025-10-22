@@ -28,51 +28,51 @@ const Footer = () => {
     <footer 
       className="relative w-full overflow-hidden"
       style={{
-        background: 'linear-gradient(180deg, #1a1a2e 0%, #2d2d4a 100%)'
+        backgroundImage: 'linear-gradient(180deg, #94545c 0%, #7a3f45 100%)'
       }}
     >
       {/* Decorative top border */}
       <div 
         className="absolute top-0 left-0 right-0 h-1"
         style={{
-          background: 'linear-gradient(90deg, #cbc2d7, #F6F4F7, #cbc2d7)',
-          opacity: 0.3
+          backgroundImage: 'linear-gradient(90deg, #cc878e, #ffe3e8, #cc878e)',
+          opacity: 0.4
         }}
       />
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-20">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-12 md:py-16">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 md:gap-10 mb-10 md:mb-12">
           {/* Brand Section */}
           <div className="lg:col-span-4">
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-5">
               <div 
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                className="w-11 h-11 rounded-xl flex items-center justify-center"
                 style={{
-                  background: 'linear-gradient(135deg, #cbc2d7, #F6F4F7)',
-                  boxShadow: '0 4px 12px rgba(203,194,215,0.3)'
+                  backgroundImage: 'linear-gradient(135deg, #cc878e, #ffe3e8)',
+                  boxShadow: '0 4px 12px rgba(204,135,142,0.3)'
                 }}
               >
-                <span className="text-2xl font-black" style={{ color: '#1a1a2e' }}>✦</span>
+                <span className="text-xl font-black" style={{ color: '#ffffff' }}>✦</span>
               </div>
               <div>
-                <h3 className="text-xl font-black tracking-tight leading-none" style={{ 
-                  background: 'linear-gradient(135deg, #F6F4F7 0%, #cbc2d7 100%)',
+                <h3 className="text-lg font-black tracking-tight leading-none" style={{ 
+                  backgroundImage: 'linear-gradient(135deg, #ffffff 0%, #ffe3e8 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text'
                 }}>
-                  DEAD SEA
+                  MAR UNITED
                 </h3>
-                <p className="text-[10px] tracking-[0.2em] uppercase font-semibold" style={{ color: '#cbc2d7', opacity: 0.7 }}>
-                  Pure Minerals
+                <p className="text-[10px] tracking-[0.2em] uppercase font-semibold" style={{ color: '#ffe3e8', opacity: 0.8 }}>
+                  Premium Quality
                 </p>
               </div>
             </div>
             
             <p 
-              className="text-sm leading-relaxed mb-6"
-              style={{ color: '#F6F4F7', opacity: 0.7 }}
+              className="text-sm leading-relaxed mb-5"
+              style={{ color: '#ffffff', opacity: 0.8 }}
             >
               Experience the ancient healing powers of the Dead Sea. Premium skincare crafted from nature's most powerful minerals.
             </p>
@@ -89,17 +89,17 @@ const Footer = () => {
                   <a
                     key={idx}
                     href="#"
-                    className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 group"
                     style={{
-                      background: 'rgba(203,194,215,0.1)',
-                      border: '1px solid rgba(203,194,215,0.2)'
+                      backgroundColor: 'rgba(255,227,232,0.15)',
+                      border: '1px solid rgba(255,227,232,0.25)'
                     }}
                     aria-label={social.label}
                   >
                     <Icon 
-                      size={18}
+                      size={16}
                       className="transition-colors duration-300"
-                      style={{ color: '#cbc2d7' }}
+                      style={{ color: '#ffe3e8' }}
                     />
                   </a>
                 );
@@ -110,18 +110,18 @@ const Footer = () => {
           {/* Shop Links */}
           <div className="lg:col-span-2">
             <h4 
-              className="text-sm font-black tracking-wider uppercase mb-4"
-              style={{ color: '#cbc2d7' }}
+              className="text-xs font-black tracking-wider uppercase mb-4"
+              style={{ color: '#ffe3e8' }}
             >
               Shop
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               {footerLinks.shop.map((link, idx) => (
                 <li key={idx}>
                   <a
                     href={link.href}
                     className="text-sm transition-all duration-300 hover:translate-x-1 inline-block group"
-                    style={{ color: '#F6F4F7', opacity: 0.7 }}
+                    style={{ color: '#ffffff', opacity: 0.75 }}
                   >
                     <span className="group-hover:opacity-100 transition-opacity duration-300">
                       {link.name}
@@ -135,18 +135,18 @@ const Footer = () => {
           {/* Company Links */}
           <div className="lg:col-span-2">
             <h4 
-              className="text-sm font-black tracking-wider uppercase mb-4"
-              style={{ color: '#cbc2d7' }}
+              className="text-xs font-black tracking-wider uppercase mb-4"
+              style={{ color: '#ffe3e8' }}
             >
               Company
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               {footerLinks.company.map((link, idx) => (
                 <li key={idx}>
                   <a
                     href={link.href}
                     className="text-sm transition-all duration-300 hover:translate-x-1 inline-block"
-                    style={{ color: '#F6F4F7', opacity: 0.7 }}
+                    style={{ color: '#ffffff', opacity: 0.75 }}
                   >
                     {link.name}
                   </a>
@@ -158,18 +158,18 @@ const Footer = () => {
           {/* Support Links */}
           <div className="lg:col-span-2">
             <h4 
-              className="text-sm font-black tracking-wider uppercase mb-4"
-              style={{ color: '#cbc2d7' }}
+              className="text-xs font-black tracking-wider uppercase mb-4"
+              style={{ color: '#ffe3e8' }}
             >
               Support
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               {footerLinks.support.map((link, idx) => (
                 <li key={idx}>
                   <a
                     href={link.href}
                     className="text-sm transition-all duration-300 hover:translate-x-1 inline-block"
-                    style={{ color: '#F6F4F7', opacity: 0.7 }}
+                    style={{ color: '#ffffff', opacity: 0.75 }}
                   >
                     {link.name}
                   </a>
@@ -181,28 +181,28 @@ const Footer = () => {
           {/* Contact Info */}
           <div className="lg:col-span-2">
             <h4 
-              className="text-sm font-black tracking-wider uppercase mb-4"
-              style={{ color: '#cbc2d7' }}
+              className="text-xs font-black tracking-wider uppercase mb-4"
+              style={{ color: '#ffe3e8' }}
             >
               Contact
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               <li className="flex items-start gap-2">
-                <MapPin size={16} style={{ color: '#cbc2d7', marginTop: '2px' }} />
-                <span className="text-sm" style={{ color: '#F6F4F7', opacity: 0.7 }}>
+                <MapPin size={14} style={{ color: '#ffe3e8', marginTop: '2px', flexShrink: 0 }} />
+                <span className="text-sm" style={{ color: '#ffffff', opacity: 0.75 }}>
                   Zarqa, Jordan
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <Phone size={16} style={{ color: '#cbc2d7', marginTop: '2px' }} />
-                <span className="text-sm" style={{ color: '#F6F4F7', opacity: 0.7 }}>
+                <Phone size={14} style={{ color: '#ffe3e8', marginTop: '2px', flexShrink: 0 }} />
+                <span className="text-sm" style={{ color: '#ffffff', opacity: 0.75 }}>
                   +962 XX XXX XXXX
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <Mail size={16} style={{ color: '#cbc2d7', marginTop: '2px' }} />
-                <span className="text-sm" style={{ color: '#F6F4F7', opacity: 0.7 }}>
-                  info@deadsea.com
+                <Mail size={14} style={{ color: '#ffe3e8', marginTop: '2px', flexShrink: 0 }} />
+                <span className="text-sm" style={{ color: '#ffffff', opacity: 0.75 }}>
+                  info@marunited.com
                 </span>
               </li>
             </ul>
@@ -211,17 +211,17 @@ const Footer = () => {
 
         {/* Newsletter Section */}
         <div 
-          className="rounded-2xl p-8 mb-12"
+          className="rounded-xl p-6 md:p-8 mb-10 md:mb-12"
           style={{
-            background: 'rgba(203,194,215,0.1)',
-            border: '1px solid rgba(203,194,215,0.2)'
+            backgroundColor: 'rgba(255,227,232,0.1)',
+            border: '1px solid rgba(255,227,232,0.25)'
           }}
         >
           <div className="max-w-2xl mx-auto text-center">
             <h4 
-              className="text-2xl md:text-3xl font-black mb-3"
+              className="text-xl md:text-2xl font-black mb-2"
               style={{ 
-                background: 'linear-gradient(135deg, #F6F4F7 0%, #cbc2d7 100%)',
+                backgroundImage: 'linear-gradient(135deg, #ffffff 0%, #ffe3e8 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text'
@@ -230,8 +230,8 @@ const Footer = () => {
               Join Our Community
             </h4>
             <p 
-              className="text-sm mb-6"
-              style={{ color: '#F6F4F7', opacity: 0.7 }}
+              className="text-sm mb-5"
+              style={{ color: '#ffffff', opacity: 0.8 }}
             >
               Subscribe to receive exclusive offers, skincare tips, and updates
             </p>
@@ -240,20 +240,19 @@ const Footer = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-5 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 transition-all duration-300"
+                className="flex-1 px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 transition-all duration-300"
                 style={{
-                  background: 'rgba(246,244,247,0.1)',
-                  border: '1px solid rgba(203,194,215,0.3)',
-                  color: '#F6F4F7',
-                  focusRingColor: '#cbc2d7'
+                  backgroundColor: 'rgba(255,255,255,0.15)',
+                  border: '1px solid rgba(255,227,232,0.3)',
+                  color: '#ffffff'
                 }}
               />
               <button 
-                className="px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:scale-105 whitespace-nowrap"
+                className="px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 hover:scale-105 whitespace-nowrap"
                 style={{
-                  background: 'linear-gradient(135deg, #cbc2d7, #F6F4F7)',
-                  color: '#1a1a2e',
-                  boxShadow: '0 4px 12px rgba(203,194,215,0.3)'
+                  backgroundImage: 'linear-gradient(135deg, #00c9bb, #00d4c7)',
+                  color: '#ffffff',
+                  boxShadow: '0 4px 12px rgba(0,201,187,0.3)'
                 }}
               >
                 Subscribe
@@ -264,28 +263,28 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div 
-          className="pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4"
-          style={{ borderColor: 'rgba(203,194,215,0.2)' }}
+          className="pt-6 md:pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4"
+          style={{ borderColor: 'rgba(255,227,232,0.25)' }}
         >
           <p 
-            className="text-sm text-center md:text-left"
-            style={{ color: '#F6F4F7', opacity: 0.6 }}
+            className="text-xs md:text-sm text-center md:text-left"
+            style={{ color: '#ffffff', opacity: 0.6 }}
           >
-            © {currentYear} Dead Sea Pure Minerals. All rights reserved.
+            © {currentYear} Mar United. All rights reserved.
           </p>
           
-          <div className="flex gap-6">
+          <div className="flex gap-5 md:gap-6">
             <a 
               href="#privacy" 
-              className="text-sm transition-colors duration-300 hover:opacity-100"
-              style={{ color: '#F6F4F7', opacity: 0.6 }}
+              className="text-xs md:text-sm transition-colors duration-300 hover:opacity-100"
+              style={{ color: '#ffffff', opacity: 0.6 }}
             >
               Privacy Policy
             </a>
             <a 
               href="#terms" 
-              className="text-sm transition-colors duration-300 hover:opacity-100"
-              style={{ color: '#F6F4F7', opacity: 0.6 }}
+              className="text-xs md:text-sm transition-colors duration-300 hover:opacity-100"
+              style={{ color: '#ffffff', opacity: 0.6 }}
             >
               Terms of Service
             </a>

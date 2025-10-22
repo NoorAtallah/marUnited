@@ -71,15 +71,15 @@ const FeaturedProducts = () => {
         cardsRef.current,
         {
           opacity: 0,
-          y: 80,
-          scale: 0.9
+          y: 50,
+          scale: 0.95
         },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 1,
-          stagger: 0.15,
+          duration: 0.9,
+          stagger: 0.12,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -100,20 +100,20 @@ const FeaturedProducts = () => {
     const content = card.querySelector('.product-content');
 
     gsap.to(card, {
-      y: -12,
-      duration: 0.5,
+      y: -8,
+      duration: 0.4,
       ease: 'power2.out'
     });
 
     gsap.to(image, {
-      scale: 1.1,
-      duration: 0.6,
+      scale: 1.08,
+      duration: 0.5,
       ease: 'power2.out'
     });
 
     gsap.to(content, {
-      y: -6,
-      duration: 0.4,
+      y: -4,
+      duration: 0.3,
       ease: 'power2.out'
     });
   };
@@ -127,19 +127,19 @@ const FeaturedProducts = () => {
 
     gsap.to(card, {
       y: 0,
-      duration: 0.5,
+      duration: 0.4,
       ease: 'power2.out'
     });
 
     gsap.to(image, {
       scale: 1,
-      duration: 0.6,
+      duration: 0.5,
       ease: 'power2.out'
     });
 
     gsap.to(content, {
       y: 0,
-      duration: 0.4,
+      duration: 0.3,
       ease: 'power2.out'
     });
   };
@@ -152,36 +152,36 @@ const FeaturedProducts = () => {
 
   return (
     <div 
-      className="relative w-full py-20 md:py-32 overflow-hidden"
+      className="relative w-full py-12 md:py-16 overflow-hidden"
       style={{
-        background: 'linear-gradient(180deg, #F6F4F7 0%, #ffffff 50%, #F6F4F7 100%)'
+        background: 'linear-gradient(180deg, #ffe3e8 0%, #ffffff 50%, #ffe3e8 100%)'
       }}
     >
       {/* Floating decoration */}
       <Sparkles 
         className="absolute opacity-5"
-        size={100}
+        size={80}
         style={{
           top: '10%',
           right: '10%',
-          color: '#cbc2d7',
+          color: '#cc878e',
           animation: 'float 10s ease-in-out infinite'
         }}
       />
 
-      <div className="relative max-w-7xl mx-auto px-4 md:px-8">
+      <div className="relative max-w-6xl mx-auto px-4 md:px-6">
         {/* Header */}
-        <div className="text-center mb-12 md:mb-16">
+        <div className="text-center mb-8 md:mb-10">
           <div 
-            className="text-xs md:text-sm font-bold tracking-[0.3em] uppercase mb-4"
-            style={{ color: '#cbc2d7' }}
+            className="text-xs font-bold tracking-[0.25em] uppercase mb-2"
+            style={{ color: '#cc878e' }}
           >
             Featured Products
           </div>
           <h2 
-            className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight"
+            className="text-3xl md:text-4xl lg:text-5xl font-black mb-3 leading-tight"
             style={{ 
-              background: 'linear-gradient(135deg, #1a1a2e 0%, #cbc2d7 100%)',
+              background: 'linear-gradient(135deg, #94545c 0%, #cc878e 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text'
@@ -190,15 +190,15 @@ const FeaturedProducts = () => {
             Our Best Sellers
           </h2>
           <p 
-            className="text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
-            style={{ color: '#1a1a2e', opacity: 0.6 }}
+            className="text-sm md:text-base max-w-xl mx-auto leading-relaxed"
+            style={{ color: '#94545c', opacity: 0.7 }}
           >
             Handpicked products loved by thousands. Premium quality, authentic Dead Sea minerals.
           </p>
         </div>
 
         {/* Products Grid */}
-        <div ref={sectionRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div ref={sectionRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
           {products.map((product, idx) => {
             const isHovered = hoveredIndex === idx;
             const isFavorite = favorites.includes(product.id);
@@ -213,17 +213,17 @@ const FeaturedProducts = () => {
               >
                 {/* Card */}
                 <div 
-                  className="relative bg-white rounded-2xl overflow-hidden transition-all duration-500"
+                  className="relative bg-white rounded-xl overflow-hidden transition-all duration-500"
                   style={{
                     boxShadow: isHovered 
-                      ? '0 25px 50px rgba(203,194,215,0.4)'
-                      : '0 10px 30px rgba(0,0,0,0.08)',
+                      ? '0 15px 35px rgba(204,135,142,0.3)'
+                      : '0 8px 20px rgba(0,0,0,0.06)',
                     border: '1px solid',
-                    borderColor: isHovered ? '#cbc2d7' : 'rgba(203,194,215,0.15)'
+                    borderColor: isHovered ? '#cc878e' : 'rgba(204,135,142,0.15)'
                   }}
                 >
                   {/* Image Container */}
-                  <div className="relative h-72 overflow-hidden bg-gray-50">
+                  <div className="relative h-48 overflow-hidden bg-gray-50">
                     <img 
                       src={product.image}
                       alt={product.name}
@@ -241,10 +241,10 @@ const FeaturedProducts = () => {
 
                     {/* Badge */}
                     <div 
-                      className="absolute top-4 left-4 px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-sm"
+                      className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold backdrop-blur-sm"
                       style={{
-                        background: 'rgba(203,194,215,0.9)',
-                        color: '#1a1a2e'
+                        background: 'rgba(204,135,142,0.9)',
+                        color: '#ffffff'
                       }}
                     >
                       {product.badge}
@@ -253,35 +253,35 @@ const FeaturedProducts = () => {
                     {/* Favorite Button */}
                     <button
                       onClick={() => toggleFavorite(product.id)}
-                      className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300"
+                      className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300"
                       style={{
-                        background: isFavorite ? '#cbc2d7' : 'rgba(255,255,255,0.9)',
+                        background: isFavorite ? '#cc878e' : 'rgba(255,255,255,0.9)',
                         transform: isFavorite ? 'scale(1.1)' : 'scale(1)'
                       }}
                     >
                       <Heart 
-                        size={18}
+                        size={14}
                         style={{ 
-                          color: isFavorite ? '#1a1a2e' : '#cbc2d7',
-                          fill: isFavorite ? '#1a1a2e' : 'none',
-                          strokeWidth: 2
+                          color: isFavorite ? '#ffffff' : '#cc878e',
+                          fill: isFavorite ? '#ffffff' : 'none',
+                          strokeWidth: 2.5
                         }}
                       />
                     </button>
 
                     {/* Quick View on Hover */}
                     <div 
-                      className="absolute inset-x-4 bottom-4 transition-all duration-400"
+                      className="absolute inset-x-3 bottom-3 transition-all duration-400"
                       style={{
                         opacity: isHovered ? 1 : 0,
                         transform: isHovered ? 'translateY(0)' : 'translateY(10px)'
                       }}
                     >
                       <button 
-                        className="w-full py-2.5 rounded-xl text-sm font-bold backdrop-blur-md transition-all duration-300"
+                        className="w-full py-2 rounded-lg text-xs font-bold backdrop-blur-md transition-all duration-300"
                         style={{
-                          background: 'rgba(203,194,215,0.95)',
-                          color: '#1a1a2e',
+                          background: 'rgba(0,201,187,0.95)',
+                          color: '#ffffff',
                           border: '1px solid rgba(255,255,255,0.3)'
                         }}
                       >
@@ -291,14 +291,14 @@ const FeaturedProducts = () => {
                   </div>
 
                   {/* Content */}
-                  <div className="product-content p-5">
+                  <div className="product-content p-4">
                     {/* Rating */}
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-2">
                       <div className="flex gap-0.5">
                         {[...Array(5)].map((_, i) => (
                           <Star 
                             key={i}
-                            size={14}
+                            size={12}
                             style={{ 
                               color: i < Math.floor(product.rating) ? '#FFD700' : '#e5e5e5',
                               fill: i < Math.floor(product.rating) ? '#FFD700' : 'none'
@@ -306,37 +306,37 @@ const FeaturedProducts = () => {
                           />
                         ))}
                       </div>
-                      <span className="text-xs font-medium" style={{ color: '#1a1a2e', opacity: 0.6 }}>
+                      <span className="text-xs font-medium" style={{ color: '#94545c', opacity: 0.6 }}>
                         {product.rating} ({product.reviews})
                       </span>
                     </div>
 
                     {/* Title */}
-                    <div className="mb-3">
+                    <div className="mb-2">
                       <div 
-                        className="text-xs font-bold tracking-wider uppercase mb-1"
-                        style={{ color: '#cbc2d7' }}
+                        className="text-xs font-bold tracking-wider uppercase mb-0.5"
+                        style={{ color: '#cc878e' }}
                       >
                         {product.subtitle}
                       </div>
                       <h3 
-                        className="text-lg font-black leading-tight"
-                        style={{ color: '#1a1a2e' }}
+                        className="text-base font-black leading-tight"
+                        style={{ color: '#94545c' }}
                       >
                         {product.name}
                       </h3>
                     </div>
 
                     {/* Benefits Pills */}
-                    <div className="flex flex-wrap gap-1.5 mb-4">
+                    <div className="flex flex-wrap gap-1.5 mb-3">
                       {product.benefits.slice(0, 2).map((benefit, i) => (
                         <span 
                           key={i}
                           className="text-xs px-2 py-1 rounded-full"
                           style={{
-                            background: 'rgba(203,194,215,0.1)',
-                            color: '#1a1a2e',
-                            opacity: 0.7
+                            background: 'rgba(204,135,142,0.1)',
+                            color: '#94545c',
+                            opacity: 0.8
                           }}
                         >
                           {benefit}
@@ -349,9 +349,9 @@ const FeaturedProducts = () => {
                       <div>
                         <div className="flex items-baseline gap-2">
                           <span 
-                            className="text-2xl font-black"
+                            className="text-xl font-black"
                             style={{ 
-                              background: 'linear-gradient(135deg, #1a1a2e, #cbc2d7)',
+                              background: 'linear-gradient(135deg, #94545c, #cc878e)',
                               WebkitBackgroundClip: 'text',
                               WebkitTextFillColor: 'transparent',
                               backgroundClip: 'text'
@@ -360,8 +360,8 @@ const FeaturedProducts = () => {
                             {product.price} JD
                           </span>
                           <span 
-                            className="text-sm line-through"
-                            style={{ color: '#1a1a2e', opacity: 0.4 }}
+                            className="text-xs line-through"
+                            style={{ color: '#94545c', opacity: 0.4 }}
                           >
                             {product.originalPrice}
                           </span>
@@ -369,19 +369,19 @@ const FeaturedProducts = () => {
                       </div>
 
                       <button 
-                        className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-400"
+                        className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-400"
                         style={{
                           background: isHovered 
-                            ? 'linear-gradient(135deg, #cbc2d7, #F6F4F7)'
-                            : 'rgba(203,194,215,0.1)',
+                            ? '#00c9bb'
+                            : 'rgba(204,135,142,0.1)',
                           transform: isHovered ? 'scale(1.05)' : 'scale(1)'
                         }}
                       >
                         <ShoppingCart 
-                          size={20}
+                          size={16}
                           style={{ 
-                            color: isHovered ? '#1a1a2e' : '#cbc2d7',
-                            strokeWidth: 2
+                            color: isHovered ? '#ffffff' : '#cc878e',
+                            strokeWidth: 2.5
                           }}
                         />
                       </button>
@@ -394,18 +394,18 @@ const FeaturedProducts = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-12 md:mt-16">
+        <div className="text-center mt-8 md:mt-10">
           <button 
-            className="group inline-flex items-center gap-3 px-10 md:px-12 py-4 md:py-5 rounded-full font-bold text-sm md:text-base transition-all duration-500 hover:scale-105"
+            className="group inline-flex items-center gap-2 px-8 py-3 rounded-full font-bold text-sm transition-all duration-500 hover:scale-105"
             style={{
-              background: 'linear-gradient(135deg, #1a1a2e, #2d2d4a)',
-              color: '#F6F4F7',
-              boxShadow: '0 20px 40px rgba(26,26,46,0.3)'
+              background: 'linear-gradient(135deg, #00c9bb, #00d4c7)',
+              color: '#ffffff',
+              boxShadow: '0 15px 30px rgba(0,201,187,0.3)'
             }}
           >
             View All Products
             <ArrowRight 
-              size={20}
+              size={18}
               className="transition-transform duration-500 group-hover:translate-x-2"
             />
           </button>
