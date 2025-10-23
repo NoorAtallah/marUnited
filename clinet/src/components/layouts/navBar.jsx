@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { ShoppingCart, Search, User, Home, Grid3x3, Menu } from 'lucide-react';
 
-const UniqueNavbar = () => {
+const UpdatedNavbar = () => {
   const [cartCount, setCartCount] = useState(0);
   const [activeTab, setActiveTab] = useState('home');
   const [language, setLanguage] = useState('EN');
@@ -28,49 +29,29 @@ const UniqueNavbar = () => {
   const mobileNavItems = [
     { 
       id: 'home', 
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-      ),
+      icon: <Home className="w-6 h-6" />,
       label: 'Home'
     },
     { 
       id: 'search', 
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      ),
+      icon: <Search className="w-6 h-6" />,
       label: 'Search'
     },
     { 
       id: 'collections', 
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-        </svg>
-      ),
+      icon: <Grid3x3 className="w-6 h-6" />,
       label: 'Shop'
     },
     { 
       id: 'cart', 
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-        </svg>
-      ),
+      icon: <ShoppingCart className="w-6 h-6" />,
       label: 'Cart',
       badge: cartCount
     },
     { 
-      id: 'menu', 
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      ),
-      label: 'More'
+      id: 'account', 
+      icon: <User className="w-6 h-6" />,
+      label: 'Account'
     }
   ];
 
@@ -82,9 +63,9 @@ const UniqueNavbar = () => {
           <div 
             className="rounded-2xl px-6 py-4 flex items-center justify-between backdrop-blur-xl border transition-all duration-300"
             style={{
-              background: 'linear-gradient(135deg, rgba(148,84,92,0.95) 0%, rgba(94,84,92,0.9) 100%)',
-              borderColor: 'rgba(0,201,187,0.5)',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,227,232,0.1)'
+              background: '#FFFCFB', // 60% - Dominant background
+              borderColor: '#BE6C77', // Border color
+              boxShadow: '0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.5)'
             }}
           >
             {/* Logo Section */}
@@ -92,8 +73,7 @@ const UniqueNavbar = () => {
               <div 
                 className="w-12 h-12 rounded-xl flex items-center justify-center relative overflow-hidden group cursor-pointer"
                 style={{
-                  background: 'linear-gradient(135deg, #00c9bb, #ffe3e8)',
-                  boxShadow: '0 4px 12px rgba(0,201,187,0.6)'
+              
                 }}
               >
                 <img 
@@ -107,19 +87,19 @@ const UniqueNavbar = () => {
                 />
                 <span 
                   className="text-2xl font-black hidden" 
-                  style={{ color: '#94545c', display: 'none' }}
+                  style={{ color: '#FFFCFB', display: 'none' }}
                 >
                   M
                 </span>
               </div>
               <div>
                 <h1 className="text-xl font-black tracking-tight leading-none cursor-pointer" style={{ 
-                  color: '#ffe3e8',
-                  textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                  color: '#2C2C2C', // Text color
+                  textShadow: '0 1px 2px rgba(0,0,0,0.1)'
                 }}>
                   MAR UNITED
                 </h1>
-                <p className="text-[10px] tracking-[0.2em] uppercase font-semibold" style={{ color: '#00c9bb' }}>
+                <p className="text-[10px] tracking-[0.2em] uppercase font-semibold" style={{ color: '#94545C' }}> {/* 10% - Accent */}
                   Premium Quality
                 </p>
               </div>
@@ -131,16 +111,16 @@ const UniqueNavbar = () => {
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
-                  className="relative text-sm font-bold tracking-wide group cursor-pointer transition-colors duration-300 hover:text-white"
+                  className="relative text-sm font-bold tracking-wide group cursor-pointer transition-colors duration-300"
                   style={{ 
-                    color: '#ffe3e8',
-                    textShadow: '0 1px 2px rgba(0,0,0,0.2)'
+                    color: '#2C2C2C', // Text color
+                    textShadow: '0 1px 2px rgba(0,0,0,0.05)'
                   }}
                 >
                   {item}
                   <span 
                     className="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-300"
-                    style={{ background: '#00c9bb' }}
+                    style={{ background: '#94545C' }} // 10% - Accent for hover
                   />
                 </a>
               ))}
@@ -157,14 +137,13 @@ const UniqueNavbar = () => {
                   }}
                   className="h-10 px-3 rounded-xl flex items-center gap-2 transition-all duration-300 hover:scale-105"
                   style={{
-                    background: 'rgba(0,201,187,0.2)',
-                    border: '1px solid rgba(0,201,187,0.5)',
+                    background: '#3D6460', // 30% - Secondary
+                    border: '1px solid #BE6C77', // Border
                     backdropFilter: 'blur(10px)'
                   }}
                 >
-                  <span className="text-lg">{languages.find(l => l.code === language)?.flag}</span>
-                  <span className="text-xs font-bold" style={{ color: '#ffe3e8' }}>{language}</span>
-                  <svg className="w-3 h-3" style={{ color: '#00c9bb' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span className="text-xs font-bold" style={{ color: '#FFFCFB' }}>{language}</span>
+                  <svg className="w-3 h-3" style={{ color: '#FFFCFB' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
@@ -173,8 +152,8 @@ const UniqueNavbar = () => {
                   <div 
                     className="absolute top-12 right-0 rounded-xl p-2 min-w-[140px] shadow-xl"
                     style={{
-                      background: 'rgba(148,84,92,0.98)',
-                      border: '1px solid rgba(0,201,187,0.5)',
+                      background: '#FFFCFB', // 60% - Dominant
+                      border: '1px solid #BE6C77', // Border
                       backdropFilter: 'blur(20px)'
                     }}
                   >
@@ -185,10 +164,14 @@ const UniqueNavbar = () => {
                           setLanguage(lang.code);
                           setLangDropdownOpen(false);
                         }}
-                        className="w-full px-3 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 hover:bg-black hover:bg-opacity-20"
-                        style={{ color: '#ffe3e8' }}
+                        className="w-full px-3 py-2 rounded-lg flex items-center gap-2 transition-all duration-200"
+                        style={{ 
+                          color: '#2C2C2C',
+                          ':hover': { background: 'rgba(61, 100, 96, 0.1)' }
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(61, 100, 96, 0.1)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                       >
-                        <span>{lang.flag}</span>
                         <span className="text-sm font-medium">{lang.name}</span>
                       </button>
                     ))}
@@ -205,13 +188,13 @@ const UniqueNavbar = () => {
                   }}
                   className="h-10 px-3 rounded-xl flex items-center gap-2 transition-all duration-300 hover:scale-105"
                   style={{
-                    background: 'rgba(0,201,187,0.2)',
-                    border: '1px solid rgba(0,201,187,0.5)',
+                    background: '#3D6460', // 30% - Secondary
+                    border: '1px solid #BE6C77', // Border
                     backdropFilter: 'blur(10px)'
                   }}
                 >
-                  <span className="text-xs font-bold" style={{ color: '#ffe3e8' }}>{currency}</span>
-                  <svg className="w-3 h-3" style={{ color: '#00c9bb' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span className="text-xs font-bold" style={{ color: '#FFFCFB' }}>{currency}</span>
+                  <svg className="w-3 h-3" style={{ color: '#FFFCFB' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
@@ -220,8 +203,8 @@ const UniqueNavbar = () => {
                   <div 
                     className="absolute top-12 right-0 rounded-xl p-2 min-w-[160px] shadow-xl"
                     style={{
-                      background: 'rgba(148,84,92,0.98)',
-                      border: '1px solid rgba(0,201,187,0.5)',
+                      background: '#FFFCFB', // 60% - Dominant
+                      border: '1px solid #BE6C77', // Border
                       backdropFilter: 'blur(20px)'
                     }}
                   >
@@ -232,11 +215,13 @@ const UniqueNavbar = () => {
                           setCurrency(curr.code);
                           setCurrencyDropdownOpen(false);
                         }}
-                        className="w-full px-3 py-2 rounded-lg flex items-center justify-between gap-2 transition-all duration-200 hover:bg-black hover:bg-opacity-20"
-                        style={{ color: '#ffe3e8' }}
+                        className="w-full px-3 py-2 rounded-lg flex items-center justify-between gap-2 transition-all duration-200"
+                        style={{ color: '#2C2C2C' }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(61, 100, 96, 0.1)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                       >
-                        <span className="text-sm font-medium">{curr.code}</span>
-                        <span className="text-xs opacity-70">{curr.symbol}</span>
+                        <span className="text-xs font-medium">{curr.name}</span>
+                        <span className="text-[10px] font-bold" style={{ color: '#94545C' }}>{curr.symbol}</span>
                       </button>
                     ))}
                   </div>
@@ -245,65 +230,73 @@ const UniqueNavbar = () => {
 
               {/* Search Icon */}
               <button 
-                className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:rotate-12"
+                className="h-10 w-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-105"
                 style={{
-                  background: 'rgba(0,201,187,0.2)',
-                  border: '1px solid rgba(0,201,187,0.5)',
-                  backdropFilter: 'blur(10px)'
+                  background: 'rgba(61, 100, 96, 0.1)', // 30% - Secondary (subtle)
+                  border: '1px solid #BE6C77' // Border
                 }}
-                aria-label="Search"
               >
-                <svg className="w-5 h-5" style={{ color: '#00c9bb' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+                <Search className="w-4 h-4" style={{ color: '#2C2C2C' }} />
               </button>
 
-              {/* Cart Icon Button */}
+              {/* Cart Button */}
               <button 
-                className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-105 group relative"
-                style={{ 
-                  background: '#00c9bb',
-                  boxShadow: '0 4px 12px rgba(0,201,187,0.5)'
+                className="h-10 px-4 rounded-xl flex items-center gap-2 transition-all duration-300 hover:scale-105 relative"
+                style={{
+                  background: '#94545C', // 10% - Accent (Primary CTA)
+                  border: '1px solid #BE6C77', // Border
+                  boxShadow: '0 4px 16px rgba(148, 84, 92, 0.3)'
                 }}
               >
-                <svg className="w-5 h-5" style={{ color: '#94545c' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
+                <ShoppingCart className="w-4 h-4" style={{ color: '#FFFCFB' }} />
+                {/* <span className="text-xs font-bold" style={{ color: '#FFFCFB' }}>Cart</span> */}
                 {cartCount > 0 && (
                   <span 
-                    className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black"
-                    style={{ background: '#94545c', color: '#ffe3e8' }}
+                    className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black"
+                    style={{ 
+                      background: '#BE6C77', // Border color as badge
+                      color: '#FFFCFB'
+                    }}
                   >
                     {cartCount}
                   </span>
                 )}
+              </button>
+
+              {/* Account Button */}
+              <button 
+                className="h-10 w-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-105"
+                style={{
+                  background: '#3D6460', // 30% - Secondary
+                  border: '1px solid #BE6C77' // Border
+                }}
+              >
+                <User className="w-4 h-4" style={{ color: '#FFFCFB' }} />
               </button>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Mobile Top Bar - Minimal */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-2 backdrop-blur-xl"
+      {/* Mobile Top Bar */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 backdrop-blur-xl"
         style={{
-          background: 'linear-gradient(135deg, rgba(148,84,92,0.95) 0%, rgba(94,84,92,0.9) 100%)',
-          borderBottom: '1px solid rgba(0,201,187,0.3)'
+          background: '#FFFCFB', // 60% - Dominant
+          borderBottom: '1px solid #BE6C77', // Border
+          boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
         }}
       >
         <div className="flex items-center justify-between">
-          {/* Logo and Title */}
+          {/* Logo */}
           <div className="flex items-center gap-2">
             <div 
-              className="w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{
-                background: 'linear-gradient(135deg, #00c9bb, #ffe3e8)',
-                boxShadow: '0 2px 8px rgba(0,201,187,0.4)'
-              }}
+              className="w-10 h-10 rounded-lg flex items-center justify-center"
+           
             >
               <img 
                 src="/images/1.png" 
-                alt="Logo" 
-                className="w-6 h-6 object-contain"
+                alt="Mar United Logo" 
+                className="w-8 h-8 object-contain"
                 onError={(e) => {
                   e.target.style.display = 'none';
                   e.target.nextElementSibling.style.display = 'block';
@@ -311,48 +304,120 @@ const UniqueNavbar = () => {
               />
               <span 
                 className="text-sm font-black hidden" 
-                style={{ color: '#94545c', display: 'none' }}
+                style={{ color: '#FFFCFB', display: 'none' }}
               >
                 M
               </span>
             </div>
-            <h1 className="text-base font-black" style={{ color: '#ffe3e8' }}>MAR UNITED</h1>
+            <h1 className="text-base font-black" style={{ color: '#2C2C2C' }}>MAR UNITED</h1>
           </div>
           
           {/* Language & Currency Compact */}
-          <div className="flex items-center gap-2">
-            <button 
-              className="px-2 py-1 rounded-md text-[10px] font-bold"
-              style={{
-                background: 'rgba(0,201,187,0.2)',
-                color: '#ffe3e8',
-                border: '1px solid rgba(0,201,187,0.3)'
-              }}
-              onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-            >
-              {language}
-            </button>
-            <button 
-              className="px-2 py-1 rounded-md text-[10px] font-bold"
-              style={{
-                background: 'rgba(0,201,187,0.2)',
-                color: '#ffe3e8',
-                border: '1px solid rgba(0,201,187,0.3)'
-              }}
-              onClick={() => setCurrencyDropdownOpen(!currencyDropdownOpen)}
-            >
-              {currency}
-            </button>
+          <div className="flex items-center gap-2 relative">
+            <div className="relative">
+              <button 
+                className="px-2 py-1 rounded-md text-[10px] font-bold"
+                style={{
+                  background: '#3D6460', // 30% - Secondary
+                  color: '#FFFCFB',
+                  border: '1px solid #BE6C77' // Border
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLangDropdownOpen(!langDropdownOpen);
+                  setCurrencyDropdownOpen(false);
+                }}
+              >
+                {language}
+              </button>
+              
+              {langDropdownOpen && (
+                <div 
+                  className="absolute top-8 right-0 rounded-xl p-2 min-w-[120px] shadow-xl z-[60]"
+                  style={{
+                    background: '#FFFCFB', // 60% - Dominant
+                    border: '1px solid #BE6C77', // Border
+                    backdropFilter: 'blur(20px)'
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLanguage(lang.code);
+                        setLangDropdownOpen(false);
+                      }}
+                      className="w-full px-3 py-2 rounded-lg flex items-center gap-2 transition-all duration-200"
+                      style={{ color: '#2C2C2C' }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(61, 100, 96, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <span className="text-xs font-medium">{lang.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="relative">
+              <button 
+                className="px-2 py-1 rounded-md text-[10px] font-bold"
+                style={{
+                  background: '#3D6460', // 30% - Secondary
+                  color: '#FFFCFB',
+                  border: '1px solid #BE6C77' // Border
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrencyDropdownOpen(!currencyDropdownOpen);
+                  setLangDropdownOpen(false);
+                }}
+              >
+                {currency}
+              </button>
+              
+              {currencyDropdownOpen && (
+                <div 
+                  className="absolute top-8 right-0 rounded-xl p-2 min-w-[140px] shadow-xl z-[60]"
+                  style={{
+                    background: '#FFFCFB', // 60% - Dominant
+                    border: '1px solid #BE6C77', // Border
+                    backdropFilter: 'blur(20px)'
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {currencies.map((curr) => (
+                    <button
+                      key={curr.code}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrency(curr.code);
+                        setCurrencyDropdownOpen(false);
+                      }}
+                      className="w-full px-3 py-2 rounded-lg flex items-center justify-between gap-2 transition-all duration-200"
+                      style={{ color: '#2C2C2C' }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(61, 100, 96, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <span className="text-xs font-medium">{curr.name}</span>
+                      <span className="text-[10px] font-bold" style={{ color: '#94545C' }}>{curr.symbol}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation - Like Phone Apps */}
+      {/* Mobile Bottom Navigation */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl"
         style={{
-          background: 'linear-gradient(135deg, rgba(148,84,92,0.98) 0%, rgba(94,84,92,0.95) 100%)',
-          borderTop: '1px solid rgba(0,201,187,0.3)',
-          boxShadow: '0 -4px 20px rgba(0,0,0,0.3)'
+          background: '#FFFCFB', // 60% - Dominant
+          borderTop: '1px solid #BE6C77', // Border
+          boxShadow: '0 -4px 20px rgba(0,0,0,0.1)'
         }}
       >
         <div className="flex items-center justify-around py-2">
@@ -373,7 +438,7 @@ const UniqueNavbar = () => {
                 className="relative transition-all duration-300"
                 style={{
                   transform: activeTab === item.id ? 'scale(1.1)' : 'scale(1)',
-                  color: activeTab === item.id ? '#00c9bb' : '#ffe3e8'
+                  color: activeTab === item.id ? '#94545C' : '#3D6460' // Accent vs Secondary
                 }}
               >
                 {item.icon}
@@ -381,9 +446,9 @@ const UniqueNavbar = () => {
                   <span 
                     className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-black animate-pulse"
                     style={{ 
-                      background: '#00c9bb', 
-                      color: '#94545c',
-                      boxShadow: '0 2px 8px rgba(0,201,187,0.6)'
+                      background: '#94545C', // 10% - Accent
+                      color: '#FFFCFB',
+                      boxShadow: '0 2px 8px rgba(148,84,92,0.4)'
                     }}
                   >
                     {item.badge}
@@ -393,7 +458,7 @@ const UniqueNavbar = () => {
               <span 
                 className="text-[10px] font-semibold mt-1 transition-all duration-300"
                 style={{ 
-                  color: activeTab === item.id ? '#00c9bb' : '#ffe3e8',
+                  color: activeTab === item.id ? '#94545C' : '#2C2C2C', // Accent vs Text
                   opacity: activeTab === item.id ? 1 : 0.7
                 }}
               >
@@ -404,52 +469,13 @@ const UniqueNavbar = () => {
               {activeTab === item.id && (
                 <div 
                   className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full"
-                  style={{ background: '#00c9bb' }}
+                  style={{ background: '#94545C' }} // 10% - Accent
                 />
               )}
             </button>
           ))}
         </div>
       </div>
-
-      {/* More Menu Popup - Mobile */}
-      {moreMenuOpen && (
-        <div className="lg:hidden fixed bottom-20 left-4 right-4 z-50 animate-slideUp">
-          <div 
-            className="rounded-2xl p-4 backdrop-blur-xl border"
-            style={{
-              background: 'linear-gradient(135deg, rgba(148,84,92,0.98) 0%, rgba(94,84,92,0.95) 100%)',
-              borderColor: 'rgba(0,201,187,0.5)',
-              boxShadow: '0 -8px 32px rgba(0,0,0,0.4)'
-            }}
-          >
-            <div className="grid grid-cols-2 gap-3">
-              {['About', 'Benefits', 'Reviews', 'Contact', 'Settings', 'Help'].map((item) => (
-                <button
-                  key={item}
-                  className="py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-300"
-                  style={{
-                    background: 'rgba(0,201,187,0.15)',
-                    color: '#ffe3e8',
-                    border: '1px solid rgba(0,201,187,0.3)'
-                  }}
-                  onClick={() => setMoreMenuOpen(false)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Overlay for more menu */}
-      {moreMenuOpen && (
-        <div 
-          className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50"
-          onClick={() => setMoreMenuOpen(false)}
-        />
-      )}
 
       {/* Click outside to close dropdowns */}
       {(langDropdownOpen || currencyDropdownOpen) && (
@@ -481,4 +507,4 @@ const UniqueNavbar = () => {
   );
 };
 
-export default UniqueNavbar
+export default UpdatedNavbar;

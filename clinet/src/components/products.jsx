@@ -1,6 +1,6 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
-import { Droplets, Sparkles, Bath, ArrowRight } from 'lucide-react';
+import { Droplets, Sparkles, Bath, ArrowRight, Package } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -14,12 +14,20 @@ const CategoriesSection = () => {
   const sectionRef = useRef(null);
   const titleRef = useRef(null);
 
+  const colors = {
+    background: '#FFFCFB',     // 60% - Dominant
+    secondary: '#3D6460',       // 30% - Secondary
+    accent: '#94545C',          // 10% - Accent (Primary CTA)
+    border: '#BE6C77',          // Border
+    text: '#2C2C2C'             // Text
+  };
+
   const categories = [
     {
       icon: Droplets,
       title: "Face Care",
       subtitle: "Purify & Detoxify",
-      description: "Masks, cleansers, and serums",
+      description: "Masks, cleansers, and serums enriched with Dead Sea minerals",
       count: "12",
       image: "https://m.media-amazon.com/images/I/61Zpk51IbXS._UF1000,1000_QL80_.jpg",
       badge: "Best Seller"
@@ -28,7 +36,7 @@ const CategoriesSection = () => {
       icon: Sparkles,
       title: "Body Care",
       subtitle: "Exfoliate & Renew",
-      description: "Scrubs and body creams",
+      description: "Luxurious scrubs and nourishing body creams",
       count: "18",
       image: "https://laline.ca/cdn/shop/products/M71400052199_4.jpg?v=1668002220",
       badge: "Popular"
@@ -37,7 +45,7 @@ const CategoriesSection = () => {
       icon: Bath,
       title: "Bath & Spa",
       subtitle: "Relax & Rejuvenate",
-      description: "Salts and aromatic oils",
+      description: "Therapeutic salts and aromatic essential oils",
       count: "8",
       image: "https://bathsalt.co.uk/wp-content/uploads/2021/04/DSLR05.jpg",
       badge: "Top Rated"
@@ -79,7 +87,7 @@ const CategoriesSection = () => {
           y: 0,
           scale: 1,
           duration: 0.9,
-          stagger: 0.12,
+          stagger: 0.15,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -100,13 +108,13 @@ const CategoriesSection = () => {
     const content = card.querySelector('.category-content');
 
     gsap.to(card, {
-      y: -8,
+      y: -10,
       duration: 0.4,
       ease: 'power2.out'
     });
 
     gsap.to(image, {
-      scale: 1.08,
+      scale: 1.1,
       duration: 0.5,
       ease: 'power2.out'
     });
@@ -146,41 +154,40 @@ const CategoriesSection = () => {
 
   return (
     <div 
-      className="relative w-full py-12 md:py-16 overflow-hidden"
+      className="relative w-full py-20 md:py-28 overflow-hidden"
       style={{
-        background: 'linear-gradient(180deg, #ffffff 0%, #ffe3e8 50%, #ffffff 100%)'
+        background: colors.background
       }}
     >
       <div className="relative max-w-6xl mx-auto px-4 md:px-6">
-        {/* Header */}
-        <div ref={titleRef} className="text-center mb-8 md:mb-10">
+        {/* Minimal Header */}
+        <div ref={titleRef} className="text-center mb-16">
           <div 
-            className="text-xs font-bold tracking-[0.25em] uppercase mb-2"
-            style={{ color: '#cc878e' }}
+            className="text-xs font-bold tracking-[0.3em] uppercase mb-3"
+            style={{ color: colors.accent }}
           >
-            Shop By Category
+            Collections
           </div>
+          
           <h2 
-            className="text-3xl md:text-4xl lg:text-5xl font-black mb-3 leading-tight"
+            className="text-4xl md:text-5xl font-black mb-4"
             style={{ 
-              background: 'linear-gradient(135deg, #94545c 0%, #cc878e 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
+              color: colors.text
             }}
           >
-            Explore Our Collections
+            Shop By Category
           </h2>
+          
           <p 
-            className="text-sm md:text-base max-w-xl mx-auto leading-relaxed"
-            style={{ color: '#94545c', opacity: 0.7 }}
+            className="text-base max-w-xl mx-auto"
+            style={{ color: colors.text, opacity: 0.6 }}
           >
-            Discover your perfect skincare routine with our curated Dead Sea mineral collections
+            Curated Dead Sea mineral collections for every need
           </p>
         </div>
 
-        {/* Categories Grid */}
-        <div ref={sectionRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+        {/* Clean 3-Column Grid */}
+        <div ref={sectionRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {categories.map((category, idx) => {
             const Icon = category.icon;
             const isHovered = hoveredIndex === idx;
@@ -189,153 +196,95 @@ const CategoriesSection = () => {
               <div
                 key={idx}
                 ref={el => cardsRef.current[idx] = el}
-                className="relative group"
+                className="relative group cursor-pointer"
                 onMouseEnter={() => handleMouseEnter(idx)}
                 onMouseLeave={() => handleMouseLeave(idx)}
               >
-                {/* Card */}
+                {/* Minimal Card */}
                 <div 
-                  className="relative bg-white rounded-xl overflow-hidden transition-all duration-500"
+                  className="relative overflow-hidden transition-all duration-400"
                   style={{
-                    boxShadow: isHovered 
-                      ? '0 15px 35px rgba(204,135,142,0.3)'
-                      : '0 8px 20px rgba(0,0,0,0.06)',
+                    background: 'white',
+                    borderRadius: '16px',
                     border: '1px solid',
-                    borderColor: isHovered ? '#cc878e' : 'rgba(204,135,142,0.15)'
+                    borderColor: isHovered ? colors.border : 'rgba(190, 108, 119, 0.15)',
+                    boxShadow: isHovered 
+                      ? '0 12px 40px rgba(148, 84, 92, 0.15)'
+                      : '0 4px 20px rgba(0,0,0,0.04)'
                   }}
                 >
-                  {/* Image Container */}
-                  <div className="relative h-48 overflow-hidden bg-gray-50">
+                  {/* Image */}
+                  <div className="relative h-72 overflow-hidden">
                     <img 
                       src={category.image}
                       alt={category.title}
                       className="category-image w-full h-full object-cover"
                     />
                     
-                    {/* Overlay Gradient */}
+                    {/* Simple Overlay on Hover */}
                     <div 
                       className="absolute inset-0 transition-opacity duration-400"
                       style={{
-                        background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.1) 100%)',
+                        background: `rgba(61, 100, 96, 0.3)`,
                         opacity: isHovered ? 1 : 0
                       }}
                     />
 
-                    {/* Badge */}
+                    {/* Minimal Badge */}
                     <div 
-                      className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold backdrop-blur-sm"
+                      className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold"
                       style={{
-                        background: 'rgba(204,135,142,0.9)',
-                        color: '#ffffff'
+                        background: colors.accent,
+                        color: colors.background
                       }}
                     >
-                      {category.badge}
+                      {category.count}
                     </div>
+                  </div>
 
-                    {/* Icon */}
-                    <div 
-                      className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300"
-                      style={{
-                        background: 'rgba(255,255,255,0.9)'
-                      }}
-                    >
+                  {/* Content - Very Clean */}
+                  <div className="category-content p-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 
+                          className="text-xl font-black mb-1"
+                          style={{ color: colors.text }}
+                        >
+                          {category.title}
+                        </h3>
+                        <p 
+                          className="text-sm"
+                          style={{ color: colors.text, opacity: 0.6 }}
+                        >
+                          {category.description}
+                        </p>
+                      </div>
+                      
                       <Icon 
-                        size={16}
+                        size={24}
                         style={{ 
-                          color: '#cc878e',
-                          strokeWidth: 2.5
+                          color: colors.secondary,
+                          strokeWidth: 2
                         }}
                       />
                     </div>
 
-                    {/* Quick View on Hover */}
+                    {/* Simple Link */}
                     <div 
-                      className="absolute inset-x-3 bottom-3 transition-all duration-400"
-                      style={{
-                        opacity: isHovered ? 1 : 0,
-                        transform: isHovered ? 'translateY(0)' : 'translateY(10px)'
+                      className="flex items-center gap-2 text-sm font-bold transition-all duration-300"
+                      style={{ 
+                        color: isHovered ? colors.accent : colors.secondary
                       }}
                     >
-                      <button 
-                        className="w-full py-2 rounded-lg text-xs font-bold backdrop-blur-md transition-all duration-300"
-                        style={{
-                          background: 'rgba(0,201,187,0.95)',
-                          color: '#ffffff',
-                          border: '1px solid rgba(255,255,255,0.3)'
-                        }}
-                      >
-                        Explore Collection
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="category-content p-4">
-                    {/* Count */}
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs font-medium" style={{ color: '#cc878e' }}>
-                        {category.count} Products
-                      </span>
-                    </div>
-
-                    {/* Title */}
-                    <div className="mb-2">
-                      <div 
-                        className="text-xs font-bold tracking-wider uppercase mb-0.5"
-                        style={{ color: '#cc878e' }}
-                      >
-                        {category.subtitle}
-                      </div>
-                      <h3 
-                        className="text-base font-black leading-tight"
-                        style={{ color: '#94545c' }}
-                      >
-                        {category.title}
-                      </h3>
-                    </div>
-
-                    {/* Description */}
-                    <p 
-                      className="text-xs mb-3"
-                      style={{
-                        color: '#94545c',
-                        opacity: 0.7
-                      }}
-                    >
-                      {category.description}
-                    </p>
-
-                    {/* CTA */}
-                    <div className="flex items-center justify-between">
-                      <span 
-                        className="text-sm font-bold"
+                      <span>Shop Now</span>
+                      <ArrowRight 
+                        size={16}
+                        className="transition-transform duration-300"
                         style={{ 
-                          background: 'linear-gradient(135deg, #94545c, #cc878e)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          backgroundClip: 'text'
+                          strokeWidth: 2.5,
+                          transform: isHovered ? 'translateX(4px)' : 'translateX(0)'
                         }}
-                      >
-                        Shop Now
-                      </span>
-
-                      <button 
-                        className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-400"
-                        style={{
-                          background: isHovered 
-                            ? '#00c9bb'
-                            : 'rgba(204,135,142,0.1)',
-                          transform: isHovered ? 'scale(1.05)' : 'scale(1)'
-                        }}
-                      >
-                        <ArrowRight 
-                          size={16}
-                          style={{ 
-                            color: isHovered ? '#ffffff' : '#cc878e',
-                            strokeWidth: 2.5
-                          }}
-                        />
-                      </button>
+                      />
                     </div>
                   </div>
                 </div>
@@ -344,20 +293,22 @@ const CategoriesSection = () => {
           })}
         </div>
 
-        {/* Bottom CTA */}
-        <div className="text-center mt-8 md:mt-10">
+        {/* Simple Bottom CTA */}
+        <div className="text-center mt-12">
           <button 
-            className="group inline-flex items-center gap-2 px-8 py-3 rounded-full font-bold text-sm transition-all duration-500 hover:scale-105"
+            className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-bold text-sm transition-all duration-300 hover:scale-105"
             style={{
-              background: 'linear-gradient(135deg, #00c9bb, #00d4c7)',
-              color: '#ffffff',
-              boxShadow: '0 15px 30px rgba(0,201,187,0.3)'
+              background: colors.accent,
+              color: colors.background,
+              border: `2px solid ${colors.border}`,
+              boxShadow: '0 8px 24px rgba(148, 84, 92, 0.25)'
             }}
           >
-            View All Collections
+            View All Products
             <ArrowRight 
               size={18}
-              className="transition-transform duration-500 group-hover:translate-x-2"
+              className="transition-transform duration-300 group-hover:translate-x-1"
+              style={{ strokeWidth: 2.5 }}
             />
           </button>
         </div>

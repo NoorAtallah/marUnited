@@ -74,6 +74,31 @@ const AnimatedSections = ({
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
+  // Color scheme
+  const colors = {
+    background: '#FFFCFB',     // 60% - Dominant
+    secondary: '#3D6460',       // 30% - Secondary
+    accent: '#94545C',          // 10% - Accent (Primary CTA)
+    border: '#BE6C77',          // Border
+    text: '#2C2C2C'             // Text
+  };
+
+  // Button styles using new color scheme
+  const navButtonStyle = {
+    background: colors.accent,  // Solid accent color, no gradient
+    color: colors.background,
+    border: `2px solid ${colors.border}`,
+    boxShadow: `0 8px 24px rgba(148, 84, 92, 0.3)`,
+    cursor: 'pointer'
+  };
+
+  const disabledButtonStyle = {
+    background: 'rgba(61, 100, 96, 0.3)',
+    color: 'rgba(255, 252, 251, 0.5)',
+    border: `2px solid rgba(190, 108, 119, 0.3)`,
+    cursor: 'not-allowed'
+  };
+
   // Check if mobile
   useEffect(() => {
     const checkMobile = () => {
@@ -213,22 +238,35 @@ const AnimatedSections = ({
     const delta = Math.sign(e.deltaY);
     
     if (delta > 0 && currentIndexRef.current < sections.length - 1) {
-      e.preventDefault();
       gotoSection(currentIndexRef.current + 1, 1);
     } else if (delta < 0 && currentIndexRef.current > 0) {
+      gotoSection(currentIndexRef.current - 1, -1);
+    }
+  }, [gotoSection, sections.length, isMobile]);
+
+  // Handle keyboard navigation (desktop only)
+  const handleKeyDown = useCallback((e) => {
+    if (animatingRef.current || isMobile) return;
+
+    if (e.key === 'ArrowDown' && currentIndexRef.current < sections.length - 1) {
+      e.preventDefault();
+      gotoSection(currentIndexRef.current + 1, 1);
+    } else if (e.key === 'ArrowUp' && currentIndexRef.current > 0) {
       e.preventDefault();
       gotoSection(currentIndexRef.current - 1, -1);
     }
-  }, [sections.length, gotoSection, isMobile]);
+  }, [gotoSection, sections.length, isMobile]);
 
-  // Touch handlers for mobile swipe
+  // Mobile touch handlers
   const handleTouchStart = useCallback((e) => {
+    if (!isMobile) return;
     touchStartX.current = e.touches[0].clientX;
-  }, []);
+  }, [isMobile]);
 
   const handleTouchMove = useCallback((e) => {
+    if (!isMobile) return;
     touchEndX.current = e.touches[0].clientX;
-  }, []);
+  }, [isMobile]);
 
   const handleTouchEnd = useCallback(() => {
     if (!isMobile) return;
@@ -238,165 +276,167 @@ const AnimatedSections = ({
 
     if (Math.abs(diff) > swipeThreshold) {
       if (diff > 0 && currentIndex < sections.length - 1) {
-        // Swipe left - next slide
         goToSlide(currentIndex + 1);
       } else if (diff < 0 && currentIndex > 0) {
-        // Swipe right - previous slide
         goToSlide(currentIndex - 1);
       }
     }
-  }, [currentIndex, sections.length, goToSlide, isMobile]);
+  }, [currentIndex, goToSlide, sections.length, isMobile]);
 
-  // Setup desktop animations
+  // Set up event listeners
   useEffect(() => {
-    if (!containerRef.current || !imagesLoaded || isMobile) return;
+    if (typeof window === 'undefined') return;
 
-    const outerWrappers = outerRefs.current;
-    const innerWrappers = innerRefs.current;
-
-    // Initialize positions for desktop
-    gsap.set(outerWrappers, { xPercent: 100 });
-    gsap.set(innerWrappers, { xPercent: -100 });
-    gsap.set(sectionsRefs.current, { autoAlpha: 0 });
-
-    // Add event listeners
     const container = containerRef.current;
-    container.addEventListener('wheel', handleWheel, { passive: false });
+    if (!container) return;
 
-    // Initial animation - show first section
-    gotoSection(0, 1);
+    if (!isMobile) {
+      // Desktop: wheel and keyboard
+      window.addEventListener('wheel', handleWheel, { passive: false });
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      // Mobile: touch events
+      container.addEventListener('touchstart', handleTouchStart, { passive: true });
+      container.addEventListener('touchmove', handleTouchMove, { passive: true });
+      container.addEventListener('touchend', handleTouchEnd, { passive: true });
+    }
 
     return () => {
-      container.removeEventListener('wheel', handleWheel);
-      
-      if (timelineRef.current) {
-        timelineRef.current.kill();
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('keydown', handleKeyDown);
+      if (container) {
+        container.removeEventListener('touchstart', handleTouchStart);
+        container.removeEventListener('touchmove', handleTouchMove);
+        container.removeEventListener('touchend', handleTouchEnd);
       }
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  }, [imagesLoaded, gotoSection, handleWheel, isMobile]);
+  }, [handleWheel, handleKeyDown, handleTouchStart, handleTouchMove, handleTouchEnd, isMobile]);
 
-  const navButtonStyle = useMemo(() => ({
-    background: 'linear-gradient(135deg, #00c9bb, #ffe3e8)',
-    color: '#94545c',
-    boxShadow: '0 10px 30px rgba(0,201,187,0.4)'
-  }), []);
+  // Initialize first section
+  useEffect(() => {
+    if (!imagesLoaded || !containerRef.current) return;
+    
+    const initializeFirstSection = () => {
+      if (!isMobile && currentIndexRef.current === -1) {
+        gotoSection(0, 1);
+      } else if (isMobile && currentIndexRef.current === -1) {
+        setCurrentIndex(0);
+        currentIndexRef.current = 0;
+      }
+    };
 
-  const disabledButtonStyle = useMemo(() => ({
-    background: 'rgba(204,135,142,0.2)',
-    color: 'rgba(148,84,92,0.5)',
-    cursor: 'not-allowed'
-  }), []);
+    const timer = setTimeout(initializeFirstSection, 100);
+    return () => clearTimeout(timer);
+  }, [imagesLoaded, gotoSection, isMobile]);
 
-  // Mobile Slider Render
+  // Mobile Render (Simplified Slider)
   if (isMobile) {
     return (
       <div 
-        className="relative w-full h-screen overflow-hidden"
-        style={{ background: '#94545c' }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        ref={containerRef}
+        className={`font-sans relative ${className}`}
+        style={{ 
+          background: colors.background,
+          minHeight: '100vh',
+          overflow: 'hidden'
+        }}
       >
+        {/* Mobile Progress Dots */}
+        <div className="absolute top-4 left-0 right-0 flex justify-center gap-2 z-50">
+          {sections.map((_, i) => (
+            <button
+              key={i}
+              className="w-2 h-2 rounded-full transition-all duration-300"
+              style={{
+                background: i === currentIndex ? colors.accent : `rgba(61, 100, 96, 0.3)`,
+                transform: i === currentIndex ? 'scale(1.5)' : 'scale(1)',
+              }}
+              onClick={() => goToSlide(i)}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
+        </div>
+
         {/* Mobile Slides Container */}
         <div 
-          className="flex h-full transition-transform duration-300 ease-out"
-          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+          className="relative transition-transform duration-500 ease-out"
+          style={{
+            display: 'flex',
+            transform: `translateX(-${currentIndex * 100}%)`,
+            minHeight: '100vh'
+          }}
         >
           {sections.map((section, i) => (
-            <div key={i} className="w-full h-full flex-shrink-0 relative">
-              {/* Background Image */}
-              <div 
+            <div
+              key={i}
+              className="flex-shrink-0 w-full min-h-screen relative"
+              style={{ width: '100vw' }}
+            >
+              {/* Background */}
+              <div
                 className="absolute inset-0 bg-cover bg-center"
                 style={{
                   backgroundImage: `url("${section.img}")`,
-                  filter: 'brightness(0.4) contrast(1.1)'
-                }}
-              />
-              
-              {/* Gradient Overlay */}
-              <div 
-                className="absolute inset-0"
-                style={{
-                  background: 'linear-gradient(to bottom, rgba(148,84,92,0.7) 0%, transparent 50%, rgba(148,84,92,0.9) 100%)'
+                  filter: 'brightness(0.4) contrast(1.1)',
                 }}
               />
 
+              {/* Overlay - Updated colors */}
+              <div className="absolute inset-0" style={{
+                background: `linear-gradient(135deg, rgba(61, 100, 96, 0.8) 0%, rgba(148, 84, 92, 0.6) 100%)`
+              }} />
+
               {/* Content */}
-              <div className="relative h-full flex flex-col justify-between px-4 py-20">
-                {/* Top Content */}
-                <div className="mt-8">
-                  <div className="text-xs font-bold tracking-[0.2em] uppercase mb-2" style={{ color: '#00c9bb' }}>
+              <div className="relative z-10 flex flex-col justify-end h-full p-6 pb-24">
+                <div className="space-y-4">
+                  <div className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: colors.background }}>
                     {section.subtitle}
                   </div>
-                  <h2 className="text-3xl font-black mb-3" style={{ color: '#ffe3e8' }}>
+
+                  <h2 className="text-4xl font-black leading-tight" style={{ 
+                    color: colors.background
+                  }}>
                     {section.text}
                   </h2>
-                  <p className="text-sm leading-relaxed mb-4" style={{ color: '#ffe3e8', opacity: 0.9 }}>
+
+                  <p className="text-sm leading-relaxed" style={{ color: colors.background, opacity: 0.9 }}>
                     {section.description}
                   </p>
-                  
-                  {/* Rating */}
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="flex gap-0.5">
+
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1">
                       {[...Array(5)].map((_, idx) => (
                         <span key={idx} className="text-base" style={{ color: idx < Math.floor(section.rating) ? '#FFD700' : 'rgba(255,215,0,0.2)' }}>
                           ★
                         </span>
                       ))}
                     </div>
-                    <span className="text-xs font-medium" style={{ color: '#00c9bb' }}>
+                    <span className="text-xs font-medium" style={{ color: colors.background }}>
                       {section.rating} ({section.reviews.toLocaleString()})
                     </span>
                   </div>
-                </div>
 
-                {/* Product Image */}
-                <div className="my-6">
-                  <div 
-                    className="w-full max-w-[250px] mx-auto aspect-square rounded-2xl overflow-hidden"
-                    style={{
-                      border: '1px solid rgba(0,201,187,0.3)',
-                      boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
-                    }}
-                  >
-                    <img 
-                      src={section.img} 
-                      alt={section.text}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="flex items-center gap-4 pt-2">
+                    <div className="text-3xl font-black" style={{ 
+                      color: colors.background
+                    }}>
+                      {section.price}
+                    </div>
+                    <button 
+                      className="px-6 py-3 rounded-full text-sm font-bold uppercase transition-all duration-300 active:scale-95" 
+                      style={{
+                        background: colors.accent,
+                        color: colors.background,
+                        border: `2px solid ${colors.border}`,
+                        boxShadow: `0 8px 24px rgba(148, 84, 92, 0.4)`
+                      }}
+                    >
+                      Add to Cart
+                    </button>
                   </div>
-                </div>
-
-                {/* Bottom Content - Price and Button */}
-                <div className="flex items-center justify-between">
-                  <div className="text-3xl font-black" style={{ color: '#ffe3e8' }}>
-                    {section.price}
-                  </div>
-                  <button 
-                    className="px-6 py-2.5 rounded-full text-sm font-bold uppercase"
-                    style={navButtonStyle}
-                  >
-                    Add to Cart
-                  </button>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Mobile Dots Indicator */}
-        <div className="absolute bottom-24 left-0 right-0 flex justify-center gap-2">
-          {sections.map((_, i) => (
-            <button
-              key={i}
-              className="w-2 h-2 rounded-full transition-all duration-300"
-              style={{
-                background: i === currentIndex ? '#00c9bb' : 'rgba(255,227,232,0.3)',
-                transform: i === currentIndex ? 'scale(1.5)' : 'scale(1)'
-              }}
-              onClick={() => goToSlide(i)}
-            />
           ))}
         </div>
 
@@ -427,12 +467,12 @@ const AnimatedSections = ({
       ref={containerRef}
       className={`font-sans relative ${className}`}
       style={{ 
-        background: '#94545c',
+        background: colors.background,
         height: '100vh',
         overflow: 'hidden'
       }}
     >
-      {/* Progress Indicator */}
+      {/* Progress Indicator - Updated colors */}
       <div 
         className="absolute top-[100px] left-8 flex flex-col gap-3"
         style={{ zIndex: 100, pointerEvents: 'auto' }}
@@ -442,7 +482,7 @@ const AnimatedSections = ({
             key={i}
             className="w-1 h-12 rounded-full transition-all duration-500 cursor-pointer focus:outline-none"
             style={{
-              background: i === currentIndex ? 'linear-gradient(180deg, #00c9bb, #ffe3e8)' : 'rgba(255,227,232,0.2)',
+              background: i === currentIndex ? colors.accent : `rgba(61, 100, 96, 0.3)`,
               transform: i === currentIndex ? 'scaleY(1.3)' : 'scaleY(1)',
             }}
             onClick={() => {
@@ -490,8 +530,8 @@ const AnimatedSections = ({
               <div 
                 className="w-20 h-20 rounded-2xl overflow-hidden transition-all duration-500 group-hover:scale-110"
                 style={{
-                  border: currentIndex === i ? '3px solid #00c9bb' : '3px solid rgba(255,227,232,0.2)',
-                  boxShadow: currentIndex === i ? '0 10px 30px rgba(0,201,187,0.6)' : 'none',
+                  border: currentIndex === i ? `3px solid ${colors.accent}` : `3px solid ${colors.border}`,
+                  boxShadow: currentIndex === i ? `0 10px 30px rgba(148, 84, 92, 0.6)` : 'none',
                   transform: currentIndex === i ? 'translateY(-8px)' : 'translateY(0)',
                 }}
               >
@@ -540,8 +580,9 @@ const AnimatedSections = ({
                   }}
                 />
 
+                {/* Overlay - Updated to use new colors */}
                 <div className="absolute inset-0" style={{
-                  background: 'linear-gradient(135deg, rgba(148,84,92,0.8) 0%, rgba(204,135,142,0.3) 50%, transparent 100%)'
+                  background: `linear-gradient(135deg, rgba(61, 100, 96, 0.85) 0%, rgba(148, 84, 92, 0.6) 50%, transparent 100%)`
                 }} />
 
                 {/* Content */}
@@ -554,7 +595,7 @@ const AnimatedSections = ({
                       {/* Left: Product Image */}
                       <div className="relative">
                         <div className="relative w-full max-w-md mx-auto aspect-square rounded-2xl overflow-hidden" style={{
-                          border: '1px solid rgba(0,201,187,0.3)',
+                          border: `1px solid ${colors.border}`,
                           boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
                         }}>
                           <img 
@@ -567,20 +608,17 @@ const AnimatedSections = ({
 
                       {/* Right: Product Info */}
                       <div className="space-y-6">
-                        <div className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: '#00c9bb' }}>
+                        <div className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: colors.background }}>
                           {section.subtitle}
                         </div>
 
                         <h2 className="text-6xl font-black leading-tight" style={{ 
-                          background: 'linear-gradient(135deg, #ffe3e8 0%, #00c9bb 100%)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          backgroundClip: 'text'
+                          color: colors.background
                         }}>
                           {section.text}
                         </h2>
 
-                        <p className="text-base leading-relaxed" style={{ color: '#ffe3e8', opacity: 0.8 }}>
+                        <p className="text-base leading-relaxed" style={{ color: colors.background, opacity: 0.9 }}>
                           {section.description}
                         </p>
 
@@ -592,21 +630,21 @@ const AnimatedSections = ({
                               </span>
                             ))}
                           </div>
-                          <span className="text-xs font-medium" style={{ color: '#00c9bb' }}>
+                          <span className="text-xs font-medium" style={{ color: colors.background }}>
                             {section.rating} ({section.reviews.toLocaleString()})
                           </span>
                         </div>
 
                         <div className="flex items-center gap-5 pt-2">
                           <div className="text-4xl font-black" style={{ 
-                            background: 'linear-gradient(135deg, #ffe3e8, #00c9bb)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text'
+                            color: colors.background
                           }}>
                             {section.price}
                           </div>
-                          <button className="px-8 py-3 rounded-full text-sm font-bold uppercase transition-all duration-300 hover:scale-105" style={navButtonStyle}>
+                          <button 
+                            className="px-8 py-3 rounded-full text-sm font-bold uppercase transition-all duration-300 hover:scale-105" 
+                            style={navButtonStyle}
+                          >
                             Add to Cart
                           </button>
                         </div>

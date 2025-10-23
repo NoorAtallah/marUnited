@@ -4,6 +4,14 @@ import { useEffect, useRef } from 'react';
 const GentleWaveSection = () => {
   const canvasRef = useRef(null);
 
+  const colors = {
+    background: '#FFFCFB',     // 60% - Dominant
+    secondary: '#3D6460',       // 30% - Secondary
+    accent: '#94545C',          // 10% - Accent (Primary CTA)
+    border: '#BE6C77',          // Border
+    text: '#2C2C2C'             // Text
+  };
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -20,22 +28,22 @@ const GentleWaveSection = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Wave configuration
+    // Wave configuration with new color scheme
     const waves = [
       {
         amplitude: 15,
         frequency: 0.015,
         speed: 0.015,
         opacity: 0.03,
-        color: '#cc878e',
+        color: colors.accent, // #94545C
         offset: 0
       },
       {
         amplitude: 20,
         frequency: 0.012,
         speed: 0.01,
-        opacity: 0.04,
-        color: '#ffe3e8',
+        opacity: 0.05,
+        color: colors.secondary, // #3D6460
         offset: 50
       },
       {
@@ -43,15 +51,15 @@ const GentleWaveSection = () => {
         frequency: 0.018,
         speed: 0.02,
         opacity: 0.025,
-        color: '#00c9bb',
+        color: colors.border, // #BE6C77
         offset: 100
       },
       {
         amplitude: 18,
         frequency: 0.01,
         speed: 0.012,
-        opacity: 0.035,
-        color: '#94545c',
+        opacity: 0.04,
+        color: colors.secondary, // #3D6460
         offset: 150
       }
     ];
@@ -96,12 +104,12 @@ const GentleWaveSection = () => {
   }, []);
 
   return (
-    <div className="relative w-full overflow-hidden" style={{ height: '100px' }}>
-      {/* Gradient blend at top */}
+    <div className="relative w-full overflow-hidden" style={{ height: '100px', background: colors.background }}>
+      {/* Gradient blend at top - blends with categories section */}
       <div 
         className="absolute inset-x-0 top-0 h-8 pointer-events-none"
         style={{
-          background: 'linear-gradient(180deg, #ffffff 0%, transparent 100%)',
+          background: `linear-gradient(180deg, ${colors.background} 0%, transparent 100%)`,
           zIndex: 10
         }}
       />
@@ -112,11 +120,11 @@ const GentleWaveSection = () => {
         style={{ background: 'transparent' }}
       />
       
-      {/* Gradient blend at bottom */}
+      {/* Gradient blend at bottom - continues the background */}
       <div 
         className="absolute inset-x-0 bottom-0 h-12 pointer-events-none"
         style={{
-          background: 'linear-gradient(180deg, transparent 0%, #ffe3e8 100%)',
+          background: `linear-gradient(180deg, transparent 0%, ${colors.background} 100%)`,
           zIndex: 10
         }}
       />
@@ -127,7 +135,7 @@ const GentleWaveSection = () => {
           <p 
             className="text-xs md:text-sm font-medium tracking-[0.3em] uppercase"
             style={{ 
-              color: '#cc878e',
+              color: colors.secondary,
               opacity: 0.3
             }}
           >

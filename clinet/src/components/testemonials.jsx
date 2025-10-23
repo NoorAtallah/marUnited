@@ -11,6 +11,14 @@ const AnimatedTestimonials = ({
 }) => {
   const [active, setActive] = useState(0);
 
+  const colors = {
+    background: '#FFFCFB',     // 60% - Dominant
+    secondary: '#3D6460',       // 30% - Secondary
+    accent: '#94545C',          // 10% - Accent (Primary CTA)
+    border: '#BE6C77',          // Border
+    text: '#2C2C2C'             // Text
+  };
+
   const handleNext = () => {
     setActive((prev) => (prev + 1) % testimonials.length);
   };
@@ -71,7 +79,8 @@ const AnimatedTestimonials = ({
                     draggable={false}
                     className="h-full w-full rounded-2xl object-cover object-center"
                     style={{
-                      boxShadow: '0 15px 35px rgba(204,135,142,0.3)'
+                      boxShadow: `0 15px 35px rgba(148, 84, 92, 0.3)`,
+                      border: `2px solid ${colors.border}`
                     }}
                   />
                 </motion.div>
@@ -104,23 +113,20 @@ const AnimatedTestimonials = ({
             <h3 
               className="text-xl md:text-2xl lg:text-3xl font-black mb-1 md:mb-2"
               style={{ 
-                background: 'linear-gradient(135deg, #94545c 0%, #cc878e 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text'
+                color: colors.text
               }}
             >
               {testimonials[active].name}
             </h3>
             <p 
               className="text-xs md:text-sm mb-4 md:mb-6 lg:mb-8 font-medium"
-              style={{ color: '#cc878e' }}
+              style={{ color: colors.accent }}
             >
               {testimonials[active].designation}
             </p>
             <motion.p 
               className="text-sm md:text-base lg:text-lg leading-relaxed" 
-              style={{ color: '#94545c', opacity: 0.85 }}
+              style={{ color: colors.text, opacity: 0.85 }}
             >
               {testimonials[active].quote.split(" ").map((word, index) => (
                 <motion.span
@@ -148,34 +154,36 @@ const AnimatedTestimonials = ({
             </motion.p>
           </motion.div>
 
-          {/* Navigation */}
+          {/* Navigation - NO gradients */}
           <div className="flex gap-3 pt-8 md:pt-10 lg:pt-0">
             <button
               onClick={handlePrev}
               className="h-9 w-9 md:h-10 md:w-10 rounded-full flex items-center justify-center group transition-all duration-300 hover:scale-110"
               style={{
-                background: 'linear-gradient(135deg, #cc878e, #ffe3e8)',
-                boxShadow: '0 4px 12px rgba(204,135,142,0.3)'
+                background: colors.secondary,
+                border: `2px solid ${colors.border}`,
+                boxShadow: `0 4px 12px rgba(61, 100, 96, 0.3)`
               }}
             >
               <ArrowLeft 
                 size={18}
                 className="transition-transform duration-300 group-hover:-translate-x-1"
-                style={{ color: '#ffffff', strokeWidth: 2.5 }}
+                style={{ color: colors.background, strokeWidth: 2.5 }}
               />
             </button>
             <button
               onClick={handleNext}
               className="h-9 w-9 md:h-10 md:w-10 rounded-full flex items-center justify-center group transition-all duration-300 hover:scale-110"
               style={{
-                background: 'linear-gradient(135deg, #00c9bb, #00d4c7)',
-                boxShadow: '0 4px 12px rgba(0,201,187,0.3)'
+                background: colors.accent,
+                border: `2px solid ${colors.border}`,
+                boxShadow: `0 4px 12px rgba(148, 84, 92, 0.3)`
               }}
             >
               <ArrowRight 
                 size={18}
                 className="transition-transform duration-300 group-hover:translate-x-1"
-                style={{ color: '#ffffff', strokeWidth: 2.5 }}
+                style={{ color: colors.background, strokeWidth: 2.5 }}
               />
             </button>
           </div>
@@ -187,6 +195,14 @@ const AnimatedTestimonials = ({
 
 // Main Testimonials Section Component
 const TestimonialsSection = () => {
+  const colors = {
+    background: '#FFFCFB',     // 60% - Dominant
+    secondary: '#3D6460',       // 30% - Secondary
+    accent: '#94545C',          // 10% - Accent (Primary CTA)
+    border: '#BE6C77',          // Border
+    text: '#2C2C2C'             // Text
+  };
+
   const testimonials = [
     {
       quote: "This Dead Sea mud mask completely transformed my skin! After just two weeks, my complexion is clearer and more radiant than ever. I can't believe the difference it's made.",
@@ -218,7 +234,7 @@ const TestimonialsSection = () => {
     <div 
       className="relative w-full py-12 md:py-16 lg:py-20 overflow-hidden"
       style={{
-        background: 'linear-gradient(180deg, #ffffff 0%, #ffe3e8 100%)'
+        background: colors.background
       }}
     >
       <div className="max-w-6xl mx-auto px-4 md:px-6">
@@ -226,24 +242,21 @@ const TestimonialsSection = () => {
         <div className="text-center mb-8 md:mb-10 lg:mb-12">
           <div 
             className="text-xs font-bold tracking-[0.25em] uppercase mb-2"
-            style={{ color: '#cc878e' }}
+            style={{ color: colors.accent }}
           >
             Customer Reviews
           </div>
           <h2 
             className="text-3xl md:text-4xl lg:text-5xl font-black mb-3 leading-tight"
             style={{ 
-              background: 'linear-gradient(135deg, #94545c 0%, #cc878e 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
+              color: colors.text
             }}
           >
             Loved By Thousands
           </h2>
           <p 
             className="text-sm md:text-base max-w-xl mx-auto leading-relaxed px-4"
-            style={{ color: '#94545c', opacity: 0.7 }}
+            style={{ color: colors.text, opacity: 0.7 }}
           >
             Real stories from real customers who transformed their skincare routine with our Dead Sea products
           </p>

@@ -11,10 +11,10 @@ export default function Home() {
     <div >
       <AnimatedSections />
       <BenefitsSection />
-            <VelocityScrollSection />
+      <VelocityScrollSection />
       <FeaturedProducts />
-
       <TestimonialsSection />
+      <VelocityScrollSection />
       <CircularGallery />
       {/* <Section /> */}
     </div>

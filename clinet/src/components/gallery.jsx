@@ -506,29 +506,26 @@ const CircularGallery = ({ items, bend = 3, textColor = "#94545c", borderRadius 
   }, [items, bend, textColor, borderRadius, font]);
   
   return (
-    <div className="relative w-full py-12 md:py-16" style={{ background: 'linear-gradient(180deg, #ffe3e8 0%, #ffffff 100%)' }}>
+    <div className="relative w-full py-12 md:py-16" style={{ background: '#FFFCFB' }}>
       <div className="max-w-6xl mx-auto px-4 md:px-6 mb-8 md:mb-10">
         <div className="text-center">
           <div 
             className="text-xs font-bold tracking-[0.25em] uppercase mb-2"
-            style={{ color: '#cc878e' }}
+            style={{ color: '#94545C' }}
           >
             Product Gallery
           </div>
           <h2 
             className="text-3xl md:text-4xl lg:text-5xl font-black mb-3 leading-tight"
             style={{ 
-              backgroundImage: 'linear-gradient(135deg, #94545c 0%, #cc878e 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
+              color: '#2C2C2C',
             }}
           >
             Experience The Collection
           </h2>
           <p 
             className="text-sm md:text-base max-w-xl mx-auto leading-relaxed"
-            style={{ color: '#94545c', opacity: 0.7 }}
+            style={{ color: '#2C2C2C', opacity: 0.7 }}
           >
             Drag or scroll to explore our premium Dead Sea mineral products
           </p>
