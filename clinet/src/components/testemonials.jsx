@@ -36,11 +36,11 @@ const AnimatedTestimonials = ({
   };
 
   return (
-    <div className={`max-w-sm md:max-w-3xl lg:max-w-5xl mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 ${className}`}>
-      <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16">
+    <div className={`max-w-sm md:max-w-4xl lg:max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 ${className}`}>
+      <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-20">
         {/* Images Stack */}
         <div>
-          <div className="relative h-64 md:h-80 lg:h-96 w-full">
+          <div className="relative h-80 md:h-96 lg:h-[480px] w-full">
             <AnimatePresence>
               {testimonials.map((testimonial, index) => (
                 <motion.div
@@ -77,9 +77,10 @@ const AnimatedTestimonials = ({
                     src={testimonial.src}
                     alt={testimonial.name}
                     draggable={false}
-                    className="h-full w-full rounded-2xl object-cover object-center"
+                    className="h-full w-full object-cover object-center"
                     style={{
-                      boxShadow: `0 15px 35px rgba(148, 84, 92, 0.3)`,
+                      borderRadius: '32px',
+                      boxShadow: `0 20px 60px ${colors.accent}30`,
                       border: `2px solid ${colors.border}`
                     }}
                   />
@@ -111,22 +112,23 @@ const AnimatedTestimonials = ({
             }}
           >
             <h3 
-              className="text-xl md:text-2xl lg:text-3xl font-black mb-1 md:mb-2"
+              className="text-2xl md:text-3xl lg:text-4xl font-black mb-2 md:mb-3"
               style={{ 
-                color: colors.text
+                color: colors.text,
+                textShadow: '0 1px 2px rgba(0,0,0,0.1)'
               }}
             >
               {testimonials[active].name}
             </h3>
             <p 
-              className="text-xs md:text-sm mb-4 md:mb-6 lg:mb-8 font-medium"
+              className="text-sm md:text-base mb-6 md:mb-8 lg:mb-10 font-bold uppercase tracking-wider"
               style={{ color: colors.accent }}
             >
               {testimonials[active].designation}
             </p>
             <motion.p 
-              className="text-sm md:text-base lg:text-lg leading-relaxed" 
-              style={{ color: colors.text, opacity: 0.85 }}
+              className="text-base md:text-lg lg:text-xl leading-relaxed font-medium" 
+              style={{ color: colors.text, opacity: 0.7 }}
             >
               {testimonials[active].quote.split(" ").map((word, index) => (
                 <motion.span
@@ -154,34 +156,34 @@ const AnimatedTestimonials = ({
             </motion.p>
           </motion.div>
 
-          {/* Navigation - NO gradients */}
-          <div className="flex gap-3 pt-8 md:pt-10 lg:pt-0">
+          {/* Navigation */}
+          <div className="flex gap-4 pt-8 md:pt-10 lg:pt-0">
             <button
               onClick={handlePrev}
-              className="h-9 w-9 md:h-10 md:w-10 rounded-full flex items-center justify-center group transition-all duration-300 hover:scale-110"
+              className="h-12 w-12 md:h-14 md:w-14 rounded-xl flex items-center justify-center group transition-all duration-300 hover:scale-110"
               style={{
                 background: colors.secondary,
                 border: `2px solid ${colors.border}`,
-                boxShadow: `0 4px 12px rgba(61, 100, 96, 0.3)`
+                boxShadow: `0 8px 24px ${colors.secondary}30`
               }}
             >
               <ArrowLeft 
-                size={18}
+                size={20}
                 className="transition-transform duration-300 group-hover:-translate-x-1"
                 style={{ color: colors.background, strokeWidth: 2.5 }}
               />
             </button>
             <button
               onClick={handleNext}
-              className="h-9 w-9 md:h-10 md:w-10 rounded-full flex items-center justify-center group transition-all duration-300 hover:scale-110"
+              className="h-12 w-12 md:h-14 md:w-14 rounded-xl flex items-center justify-center group transition-all duration-300 hover:scale-110"
               style={{
                 background: colors.accent,
                 border: `2px solid ${colors.border}`,
-                boxShadow: `0 4px 12px rgba(148, 84, 92, 0.3)`
+                boxShadow: `0 8px 24px ${colors.accent}30`
               }}
             >
               <ArrowRight 
-                size={18}
+                size={20}
                 className="transition-transform duration-300 group-hover:translate-x-1"
                 style={{ color: colors.background, strokeWidth: 2.5 }}
               />
@@ -232,33 +234,44 @@ const TestimonialsSection = () => {
 
   return (
     <div 
-      className="relative w-full py-12 md:py-16 lg:py-20 overflow-hidden"
+      className="relative w-full py-12 md:py-16 lg:py-24 overflow-hidden"
       style={{
-        background: colors.background
+        background: `linear-gradient(180deg, ${colors.background} 0%, ${colors.secondary}05 100%)`
       }}
     >
-      <div className="max-w-6xl mx-auto px-4 md:px-6">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
         {/* Header */}
-        <div className="text-center mb-8 md:mb-10 lg:mb-12">
+        <div className="text-center mb-10 md:mb-12 lg:mb-16">
           <div 
-            className="text-xs font-bold tracking-[0.25em] uppercase mb-2"
-            style={{ color: colors.accent }}
-          >
-            Customer Reviews
-          </div>
-          <h2 
-            className="text-3xl md:text-4xl lg:text-5xl font-black mb-3 leading-tight"
-            style={{ 
-              color: colors.text
+            className="inline-block px-4 sm:px-6 py-2 rounded-full mb-4"
+            style={{
+              background: `${colors.accent}10`,
+              border: `1px solid ${colors.accent}30`
             }}
           >
-            Loved By Thousands
+            <span 
+              className="text-xs sm:text-sm font-bold uppercase tracking-wider"
+              style={{ color: colors.accent }}
+            >
+              Customer Reviews
+            </span>
+          </div>
+          
+          <h2 
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4"
+            style={{ 
+              color: colors.text,
+              textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+            }}
+          >
+            Loved By
+            <span style={{ color: colors.accent }}> Thousands</span>
           </h2>
           <p 
-            className="text-sm md:text-base max-w-xl mx-auto leading-relaxed px-4"
-            style={{ color: colors.text, opacity: 0.7 }}
+            className="text-base md:text-lg lg:text-xl max-w-2xl mx-auto"
+            style={{ color: colors.text, opacity: 0.6 }}
           >
-            Real stories from real customers who transformed their skincare routine with our Dead Sea products
+            Real stories from real customers who transformed their skincare routine
           </p>
         </div>
 
