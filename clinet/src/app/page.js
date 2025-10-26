@@ -6,6 +6,7 @@ import FeaturedProducts from "@/components/featuredProducts";
 import TestimonialsSection from "@/components/testemonials";
 import VelocityScrollSection from "@/components/scrollText";
 import CircularGallery from "@/components/gallery";
+import FAQSection from "@/components/FAQ";
 export default function Home() {
   return (
     <div >
@@ -16,6 +17,7 @@ export default function Home() {
       <TestimonialsSection />
       <VelocityScrollSection />
       <CircularGallery />
+      <FAQSection />
       {/* <Section /> */}
     </div>
   );

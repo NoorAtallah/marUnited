@@ -279,7 +279,7 @@ const UpdatedNavbar = () => {
       </nav>
 
       {/* Mobile Top Bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 backdrop-blur-xl"
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-1000 px-4 py-3 backdrop-blur-xl"
         style={{
           background: '#FFFCFB', // 60% - Dominant
           borderBottom: '1px solid #BE6C77', // Border
@@ -413,7 +413,7 @@ const UpdatedNavbar = () => {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl"
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-1000 backdrop-blur-xl"
         style={{
           background: '#FFFCFB', // 60% - Dominant
           borderTop: '1px solid #BE6C77', // Border

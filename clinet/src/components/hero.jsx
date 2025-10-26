@@ -1,12 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
+import { useEffect, useRef, useCallback, useState, memo } from 'react';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 const defaultSections = [
   {
@@ -55,489 +50,122 @@ const defaultSections = [
   }
 ];
 
+const colors = {
+  background: '#FFFCFB',
+  secondary: '#3D6460',
+  accent: '#94545C',
+  border: '#BE6C77',
+  text: '#2C2C2C'
+};
+
+const StarRating = memo(({ rating }) => (
+  <div className="flex gap-1">
+    {[...Array(5)].map((_, i) => (
+      <svg 
+        key={i}
+        width="20" 
+        height="20" 
+        viewBox="0 0 24 24" 
+        fill={i < Math.floor(rating) ? colors.accent : `${colors.border}30`}
+      >
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+    ))}
+  </div>
+));
+
 const AnimatedSections = ({
   sections = defaultSections,
   className = "",
 }) => {
-  const containerRef = useRef(null);
-  const timelineRef = useRef(null);
-  const currentIndexRef = useRef(-1);
-  const animatingRef = useRef(false);
-  const sectionsRefs = useRef([]);
-  const imagesRefs = useRef([]);
-  const outerRefs = useRef([]);
-  const innerRefs = useRef([]);
-  const contentRefs = useRef([]);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const containerRef = useRef(null);
+  const sectionRefs = useRef([]);
 
-  // Color scheme
-  const colors = {
-    background: '#FFFCFB',     // 60% - Dominant
-    secondary: '#3D6460',       // 30% - Secondary
-    accent: '#94545C',          // 10% - Accent (Primary CTA)
-    border: '#BE6C77',          // Border
-    text: '#2C2C2C'             // Text
-  };
-
-  // Button styles using new color scheme
-  const navButtonStyle = {
-    background: colors.accent,  // Solid accent color, no gradient
-    color: colors.background,
-    border: `2px solid ${colors.border}`,
-    boxShadow: `0 8px 24px rgba(148, 84, 92, 0.3)`,
-    cursor: 'pointer'
-  };
-
-  const disabledButtonStyle = {
-    background: 'rgba(61, 100, 96, 0.3)',
-    color: 'rgba(255, 252, 251, 0.5)',
-    border: `2px solid rgba(190, 108, 119, 0.3)`,
-    cursor: 'not-allowed'
-  };
-
-  // Check if mobile
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Preload images
-  useEffect(() => {
-    const preloadImages = async () => {
-      try {
-        await Promise.all(
-          sections.map(section => 
-            new Promise((resolve) => {
-              const img = new Image();
-              img.src = section.img;
-              img.onload = resolve;
-              img.onerror = resolve;
-            })
-          )
-        );
-        setImagesLoaded(true);
-      } catch (error) {
-        setImagesLoaded(true);
-      }
-    };
+  const goToSlide = useCallback((newIndex) => {
+    if (newIndex < 0 || newIndex >= sections.length || isAnimating) return;
     
-    preloadImages();
-  }, [sections]);
-
-  // Desktop animation function
-  const gotoSection = useCallback((index, direction) => {
-    if (!containerRef.current || animatingRef.current || isMobile) return;
-
-    const sectionsElements = sectionsRefs.current;
-    const images = imagesRefs.current;
-    const outerWrappers = outerRefs.current;
-    const innerWrappers = innerRefs.current;
-    const contents = contentRefs.current;
-
-    if (index < 0 || index >= sectionsElements.length) return;
-
-    animatingRef.current = true;
-
-    const fromTop = direction === -1;
-    const dFactor = fromTop ? -1 : 1;
-
-    if (timelineRef.current) {
-      timelineRef.current.kill();
-    }
-
+    setIsAnimating(true);
+    const direction = newIndex > currentIndex ? 1 : -1;
+    
     const tl = gsap.timeline({
-      defaults: { duration: 1.0, ease: 'power2.inOut' },
       onComplete: () => {
-        animatingRef.current = false;
+        setCurrentIndex(newIndex);
+        setIsAnimating(false);
       }
     });
 
-    timelineRef.current = tl;
-
-    // Set z-index for proper stacking
-    gsap.set(sectionsElements, { zIndex: 1 });
-    gsap.set(sectionsElements[index], { zIndex: 10 });
-    if (currentIndexRef.current >= 0) {
-      gsap.set(sectionsElements[currentIndexRef.current], { zIndex: 5 });
+    // Fade out current
+    if (sectionRefs.current[currentIndex]) {
+      tl.to(sectionRefs.current[currentIndex], {
+        opacity: 0,
+        x: -30 * direction,
+        duration: 0.4,
+        ease: 'power2.in'
+      }, 0);
     }
 
-    // Set up new section
-    gsap.set(sectionsElements[index], { autoAlpha: 1 });
-    gsap.set(outerWrappers[index], { xPercent: 100 * dFactor });
-    gsap.set(innerWrappers[index], { xPercent: -100 * dFactor });
-
-    // Animate out current section if exists
-    if (currentIndexRef.current >= 0) {
-      const currentIdx = currentIndexRef.current;
-      tl.to(images[currentIdx], { 
-        xPercent: -10 * dFactor, 
-        scale: 1.1,
-        ease: 'power2.inOut',
-        duration: 1.0
-      }, 0)
-        .to(contents[currentIdx], { 
-          opacity: 0, 
-          x: -50 * dFactor,
-          duration: 0.6,
-          ease: 'power2.in'
-        }, 0);
-    }
-
-    // Animate in new section
-    tl.to(
-      outerWrappers[index],
-      { xPercent: 0, ease: 'power2.inOut', duration: 1.0 },
-      0
-    )
-      .to(
-        innerWrappers[index],
-        { xPercent: 0, ease: 'power2.inOut', duration: 1.0 },
-        0
-      )
-      .fromTo(
-        images[index],
-        { xPercent: 10 * dFactor, scale: 1.1 },
-        { xPercent: 0, scale: 1, duration: 1.2, ease: 'power2.out' },
-        0
-      )
-      .fromTo(
-        contents[index],
-        { opacity: 0, x: 80 * dFactor },
-        { opacity: 1, x: 0, duration: 0.9, ease: 'power2.out' },
+    // Fade in new
+    if (sectionRefs.current[newIndex]) {
+      tl.fromTo(sectionRefs.current[newIndex], 
+        { opacity: 0, x: 30 * direction },
+        { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' },
         0.3
       );
-
-    // Clean up previous section
-    if (currentIndexRef.current >= 0 && currentIndexRef.current !== index) {
-      tl.set(sectionsElements[currentIndexRef.current], { autoAlpha: 0 }, 1.0);
     }
+  }, [currentIndex, isAnimating, sections.length]);
 
-    currentIndexRef.current = index;
-    setCurrentIndex(index);
-  }, [isMobile]);
-
-  // Simple mobile slide function
-  const goToSlide = useCallback((index) => {
-    if (index < 0 || index >= sections.length) return;
-    setCurrentIndex(index);
-    currentIndexRef.current = index;
-  }, [sections.length]);
-
-  // Handle wheel events (desktop only)
-  const handleWheel = useCallback((e) => {
-    if (animatingRef.current || isMobile) return;
-
-    const delta = Math.sign(e.deltaY);
-    
-    if (delta > 0 && currentIndexRef.current < sections.length - 1) {
-      gotoSection(currentIndexRef.current + 1, 1);
-    } else if (delta < 0 && currentIndexRef.current > 0) {
-      gotoSection(currentIndexRef.current - 1, -1);
-    }
-  }, [gotoSection, sections.length, isMobile]);
-
-  // Handle keyboard navigation (desktop only)
-  const handleKeyDown = useCallback((e) => {
-    if (animatingRef.current || isMobile) return;
-
-    if (e.key === 'ArrowDown' && currentIndexRef.current < sections.length - 1) {
-      e.preventDefault();
-      gotoSection(currentIndexRef.current + 1, 1);
-    } else if (e.key === 'ArrowUp' && currentIndexRef.current > 0) {
-      e.preventDefault();
-      gotoSection(currentIndexRef.current - 1, -1);
-    }
-  }, [gotoSection, sections.length, isMobile]);
-
-  // Mobile touch handlers
-  const handleTouchStart = useCallback((e) => {
-    if (!isMobile) return;
-    touchStartX.current = e.touches[0].clientX;
-  }, [isMobile]);
-
-  const handleTouchMove = useCallback((e) => {
-    if (!isMobile) return;
-    touchEndX.current = e.touches[0].clientX;
-  }, [isMobile]);
-
-  const handleTouchEnd = useCallback(() => {
-    if (!isMobile) return;
-    
-    const swipeThreshold = 50;
-    const diff = touchStartX.current - touchEndX.current;
-
-    if (Math.abs(diff) > swipeThreshold) {
-      if (diff > 0 && currentIndex < sections.length - 1) {
-        goToSlide(currentIndex + 1);
-      } else if (diff < 0 && currentIndex > 0) {
-        goToSlide(currentIndex - 1);
-      }
-    }
-  }, [currentIndex, goToSlide, sections.length, isMobile]);
-
-  // Set up event listeners
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const container = containerRef.current;
-    if (!container) return;
-
-    if (!isMobile) {
-      // Desktop: wheel and keyboard
-      window.addEventListener('wheel', handleWheel, { passive: false });
-      window.addEventListener('keydown', handleKeyDown);
-    } else {
-      // Mobile: touch events
-      container.addEventListener('touchstart', handleTouchStart, { passive: true });
-      container.addEventListener('touchmove', handleTouchMove, { passive: true });
-      container.addEventListener('touchend', handleTouchEnd, { passive: true });
-    }
-
-    return () => {
-      window.removeEventListener('wheel', handleWheel);
-      window.removeEventListener('keydown', handleKeyDown);
-      if (container) {
-        container.removeEventListener('touchstart', handleTouchStart);
-        container.removeEventListener('touchmove', handleTouchMove);
-        container.removeEventListener('touchend', handleTouchEnd);
-      }
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowLeft') goToSlide(currentIndex - 1);
+      if (e.key === 'ArrowRight') goToSlide(currentIndex + 1);
     };
-  }, [handleWheel, handleKeyDown, handleTouchStart, handleTouchMove, handleTouchEnd, isMobile]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentIndex, goToSlide]);
 
-  // Initialize first section
-  useEffect(() => {
-    if (!imagesLoaded || !containerRef.current) return;
-    
-    const initializeFirstSection = () => {
-      if (!isMobile && currentIndexRef.current === -1) {
-        gotoSection(0, 1);
-      } else if (isMobile && currentIndexRef.current === -1) {
-        setCurrentIndex(0);
-        currentIndexRef.current = 0;
-      }
-    };
-
-    const timer = setTimeout(initializeFirstSection, 100);
-    return () => clearTimeout(timer);
-  }, [imagesLoaded, gotoSection, isMobile]);
-
-  // Mobile Render (Simplified Slider)
-  if (isMobile) {
-    return (
-      <div 
-        ref={containerRef}
-        className={`font-sans relative ${className}`}
-        style={{ 
-          background: colors.background,
-          minHeight: '100vh',
-          overflow: 'hidden'
-        }}
-      >
-        {/* Mobile Progress Dots */}
-        <div className="absolute top-4 left-0 right-0 flex justify-center gap-2 z-50">
-          {sections.map((_, i) => (
-            <button
-              key={i}
-              className="w-2 h-2 rounded-full transition-all duration-300"
-              style={{
-                background: i === currentIndex ? colors.accent : `rgba(61, 100, 96, 0.3)`,
-                transform: i === currentIndex ? 'scale(1.5)' : 'scale(1)',
-              }}
-              onClick={() => goToSlide(i)}
-              aria-label={`Go to slide ${i + 1}`}
-            />
-          ))}
-        </div>
-
-        {/* Mobile Slides Container */}
-        <div 
-          className="relative transition-transform duration-500 ease-out"
-          style={{
-            display: 'flex',
-            transform: `translateX(-${currentIndex * 100}%)`,
-            minHeight: '100vh'
-          }}
-        >
-          {sections.map((section, i) => (
-            <div
-              key={i}
-              className="flex-shrink-0 w-full min-h-screen relative"
-              style={{ width: '100vw' }}
-            >
-              {/* Background */}
-              <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{
-                  backgroundImage: `url("${section.img}")`,
-                  filter: 'brightness(0.4) contrast(1.1)',
-                }}
-              />
-
-              {/* Overlay - Updated colors */}
-              <div className="absolute inset-0" style={{
-                background: `linear-gradient(135deg, rgba(61, 100, 96, 0.8) 0%, rgba(148, 84, 92, 0.6) 100%)`
-              }} />
-
-              {/* Content */}
-              <div className="relative z-10 flex flex-col justify-end h-full p-6 pb-24">
-                <div className="space-y-4">
-                  <div className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: colors.background }}>
-                    {section.subtitle}
-                  </div>
-
-                  <h2 className="text-4xl font-black leading-tight" style={{ 
-                    color: colors.background
-                  }}>
-                    {section.text}
-                  </h2>
-
-                  <p className="text-sm leading-relaxed" style={{ color: colors.background, opacity: 0.9 }}>
-                    {section.description}
-                  </p>
-
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1">
-                      {[...Array(5)].map((_, idx) => (
-                        <span key={idx} className="text-base" style={{ color: idx < Math.floor(section.rating) ? '#FFD700' : 'rgba(255,215,0,0.2)' }}>
-                          ★
-                        </span>
-                      ))}
-                    </div>
-                    <span className="text-xs font-medium" style={{ color: colors.background }}>
-                      {section.rating} ({section.reviews.toLocaleString()})
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-4 pt-2">
-                    <div className="text-3xl font-black" style={{ 
-                      color: colors.background
-                    }}>
-                      {section.price}
-                    </div>
-                    <button 
-                      className="px-6 py-3 rounded-full text-sm font-bold uppercase transition-all duration-300 active:scale-95" 
-                      style={{
-                        background: colors.accent,
-                        color: colors.background,
-                        border: `2px solid ${colors.border}`,
-                        boxShadow: `0 8px 24px rgba(148, 84, 92, 0.4)`
-                      }}
-                    >
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Mobile Navigation Arrows */}
-        <button
-          className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center"
-          style={currentIndex === 0 ? disabledButtonStyle : { ...navButtonStyle, opacity: 0.8 }}
-          onClick={() => currentIndex > 0 && goToSlide(currentIndex - 1)}
-          disabled={currentIndex === 0}
-        >
-          ‹
-        </button>
-        <button
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center"
-          style={currentIndex === sections.length - 1 ? disabledButtonStyle : { ...navButtonStyle, opacity: 0.8 }}
-          onClick={() => currentIndex < sections.length - 1 && goToSlide(currentIndex + 1)}
-          disabled={currentIndex === sections.length - 1}
-        >
-          ›
-        </button>
-      </div>
-    );
-  }
-
-  // Desktop Render (Original)
   return (
     <div 
       ref={containerRef}
-      className={`font-sans relative ${className}`}
+      className={`relative ${className}`}
       style={{ 
-        background: colors.background,
-        height: '100vh',
-        overflow: 'hidden'
+        background: `linear-gradient(135deg, ${colors.background} 0%, ${colors.secondary}05 100%)`,
+        minHeight: '100vh',
+        fontFamily: "'Inter', system-ui, sans-serif"
       }}
     >
-      {/* Progress Indicator - Updated colors */}
-      <div 
-        className="absolute top-[100px] left-8 flex flex-col gap-3"
-        style={{ zIndex: 100, pointerEvents: 'auto' }}
-      >
-        {sections.map((_, i) => (
-          <button
-            key={i}
-            className="w-1 h-12 rounded-full transition-all duration-500 cursor-pointer focus:outline-none"
-            style={{
-              background: i === currentIndex ? colors.accent : `rgba(61, 100, 96, 0.3)`,
-              transform: i === currentIndex ? 'scaleY(1.3)' : 'scaleY(1)',
-            }}
-            onClick={() => {
-              if (i !== currentIndex && !animatingRef.current) {
-                const direction = i > currentIndex ? 1 : -1;
-                gotoSection(i, direction);
-              }
-            }}
-            aria-label={`Go to section ${i + 1}`}
-          />
-        ))}
-      </div>
-
-      {/* Navigation */}
-      <nav 
-        className="absolute bottom-8 left-0 right-0 flex justify-center items-center gap-8 px-4"
-        style={{ zIndex: 100, pointerEvents: 'auto' }}
-        aria-label="Product navigation"
-      >
-        <button
-          onClick={() => {
-            if (!animatingRef.current && currentIndexRef.current > 0) {
-              gotoSection(currentIndexRef.current - 1, -1);
-            }
+      {/* Main Container with Flex Layout */}
+      <div className="flex min-h-screen">
+        
+        {/* Left Side - Thumbnails (OUTSIDE the scrolling content) */}
+        <div 
+          className="hidden lg:flex flex-col justify-center items-center gap-4 pl-6 pr-4"
+          style={{
+            position: 'sticky',
+            top: 0,
+            height: '100vh',
+            alignSelf: 'flex-start'
           }}
-          className="w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all duration-300 hover:scale-110"
-          style={currentIndex === 0 ? disabledButtonStyle : navButtonStyle}
-          disabled={currentIndex === 0}
         >
-          ←
-        </button>
-
-        <div className="flex gap-4">
-          {sections.map((section, i) => (
+          {sections.map((s, i) => (
             <button
               key={i}
-              className="relative group flex-shrink-0"
-              onClick={() => {
-                if (currentIndex !== i && !animatingRef.current) {
-                  const direction = i > currentIndex ? 1 : -1;
-                  gotoSection(i, direction);
-                }
-              }}
+              onClick={() => goToSlide(i)}
+              className="block transition-all duration-300"
             >
               <div 
-                className="w-20 h-20 rounded-2xl overflow-hidden transition-all duration-500 group-hover:scale-110"
+                className="w-16 h-16 rounded-xl overflow-hidden transition-all duration-300"
                 style={{
-                  border: currentIndex === i ? `3px solid ${colors.accent}` : `3px solid ${colors.border}`,
-                  boxShadow: currentIndex === i ? `0 10px 30px rgba(148, 84, 92, 0.6)` : 'none',
-                  transform: currentIndex === i ? 'translateY(-8px)' : 'translateY(0)',
+                  border: i === currentIndex ? `3px solid ${colors.accent}` : `2px solid ${colors.border}20`,
+                  opacity: i === currentIndex ? 1 : 0.4,
+                  transform: i === currentIndex ? 'scale(1.15)' : 'scale(1)',
+                  boxShadow: i === currentIndex ? `0 8px 20px ${colors.accent}40` : 'none'
                 }}
               >
-                <img
-                  src={section.img}
-                  alt={section.text}
+                <img 
+                  src={s.img}
+                  alt={s.text}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -545,117 +173,298 @@ const AnimatedSections = ({
           ))}
         </div>
 
-        <button
-          onClick={() => {
-            if (!animatingRef.current && currentIndexRef.current < sections.length - 1) {
-              gotoSection(currentIndexRef.current + 1, 1);
-            }
-          }}
-          className="w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all duration-300 hover:scale-110"
-          style={currentIndex === sections.length - 1 ? disabledButtonStyle : navButtonStyle}
-          disabled={currentIndex === sections.length - 1}
-        >
-          →
-        </button>
-      </nav>
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col">
+          
+          {/* Top Counter */}
+          <div className="flex justify-end p-6">
+            <div 
+              className="px-5 py-3 rounded-full"
+              style={{
+                background: `${colors.background}95`,
+                backdropFilter: 'blur(20px)',
+                boxShadow: `0 8px 24px ${colors.secondary}15`,
+                border: `1px solid ${colors.border}15`
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <span 
+                  className="text-2xl font-black"
+                  style={{ color: colors.accent }}
+                >
+                  {String(currentIndex + 1).padStart(2, '0')}
+                </span>
+                <span 
+                  className="text-sm"
+                  style={{ color: colors.text, opacity: 0.4 }}
+                >
+                  / {String(sections.length).padStart(2, '0')}
+                </span>
+              </div>
+            </div>
+          </div>
 
-      {/* Desktop Sections Container */}
-      <div className="relative w-full h-full" style={{ zIndex: 1 }}>
-        {sections.map((section, i) => (
-          <section 
-            key={i} 
-            className="absolute top-0 left-0 w-full h-full"
-            ref={(el) => { if (el) sectionsRefs.current[i] = el; }}
-            style={{ visibility: 'visible', zIndex: i === currentIndex ? 10 : 1 }}
-          >
-            <div className="outer w-full h-full overflow-hidden" ref={(el) => { if (el) outerRefs.current[i] = el; }}>
-              <div className="inner w-full h-full overflow-hidden" ref={(el) => { if (el) innerRefs.current[i] = el; }}>
-                {/* Background Image */}
-                <div
-                  className="bg absolute top-0 left-0 w-full h-full bg-cover bg-center"
-                  ref={(el) => { if (el) imagesRefs.current[i] = el; }}
-                  style={{
-                    backgroundImage: `url("${section.img}")`,
-                    filter: 'brightness(0.4) contrast(1.1)',
-                  }}
-                />
-
-                {/* Overlay - Updated to use new colors */}
-                <div className="absolute inset-0" style={{
-                  background: `linear-gradient(135deg, rgba(61, 100, 96, 0.85) 0%, rgba(148, 84, 92, 0.6) 50%, transparent 100%)`
-                }} />
-
-                {/* Content */}
-                <div className="absolute inset-0 flex items-center justify-center px-16">
-                  <div 
-                    className="max-w-6xl w-full"
-                    ref={(el) => { if (el) contentRefs.current[i] = el; }}
+          {/* Content Sections */}
+          <div className="flex-1 flex items-center justify-center px-6 md:px-12 py-8">
+            <div className="max-w-6xl w-full mx-auto">
+              
+              {/* Sections */}
+              <div className="relative">
+                {sections.map((s, idx) => (
+                  <div
+                    key={idx}
+                    ref={(el) => sectionRefs.current[idx] = el}
+                    style={{
+                      display: idx === currentIndex ? 'block' : 'none'
+                    }}
                   >
-                    <div className="grid grid-cols-2 gap-12 items-center">
-                      {/* Left: Product Image */}
-                      <div className="relative">
-                        <div className="relative w-full max-w-md mx-auto aspect-square rounded-2xl overflow-hidden" style={{
-                          border: `1px solid ${colors.border}`,
-                          boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
-                        }}>
-                          <img 
-                            src={section.img} 
-                            alt={section.text}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Right: Product Info */}
+                    <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                      
+                      {/* Left - Text Content */}
                       <div className="space-y-6">
-                        <div className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: colors.background }}>
-                          {section.subtitle}
-                        </div>
-
-                        <h2 className="text-6xl font-black leading-tight" style={{ 
-                          color: colors.background
-                        }}>
-                          {section.text}
-                        </h2>
-
-                        <p className="text-base leading-relaxed" style={{ color: colors.background, opacity: 0.9 }}>
-                          {section.description}
-                        </p>
-
+                        {/* Category Badge */}
                         <div className="flex items-center gap-3">
-                          <div className="flex gap-1">
-                            {[...Array(5)].map((_, idx) => (
-                              <span key={idx} className="text-lg" style={{ color: idx < Math.floor(section.rating) ? '#FFD700' : 'rgba(255,215,0,0.2)' }}>
-                                ★
-                              </span>
-                            ))}
-                          </div>
-                          <span className="text-xs font-medium" style={{ color: colors.background }}>
-                            {section.rating} ({section.reviews.toLocaleString()})
+                          <div 
+                            className="w-12 h-[2px]"
+                            style={{ 
+                              background: `linear-gradient(90deg, ${colors.accent} 0%, transparent 100%)`
+                            }}
+                          />
+                          <span 
+                            className="text-xs font-bold uppercase tracking-[0.2em]"
+                            style={{ color: colors.secondary }}
+                          >
+                            {s.subtitle}
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-5 pt-2">
-                          <div className="text-4xl font-black" style={{ 
-                            color: colors.background
-                          }}>
-                            {section.price}
+                        {/* Title */}
+                        <h1 
+                          className="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1]"
+                          style={{
+                            color: colors.text,
+                            letterSpacing: '-0.02em'
+                          }}
+                        >
+                          {s.text}
+                        </h1>
+
+                        {/* Description */}
+                        <p 
+                          className="text-lg leading-relaxed"
+                          style={{ 
+                            color: colors.text,
+                            opacity: 0.7,
+                            maxWidth: '500px'
+                          }}
+                        >
+                          {s.description}
+                        </p>
+
+                        {/* Rating */}
+                        <div className="flex items-center gap-4 pt-2">
+                          <StarRating rating={s.rating} />
+                          <div className="flex items-center gap-2">
+                            <span className="text-xl font-bold" style={{ color: colors.accent }}>
+                              {s.rating}
+                            </span>
+                            <span className="text-sm" style={{ color: colors.text, opacity: 0.5 }}>
+                              ({s.reviews.toLocaleString()})
+                            </span>
                           </div>
-                          <button 
-                            className="px-8 py-3 rounded-full text-sm font-bold uppercase transition-all duration-300 hover:scale-105" 
-                            style={navButtonStyle}
+                        </div>
+
+                        {/* Benefits */}
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {s.benefits.map((benefit, i) => (
+                            <div 
+                              key={i}
+                              className="px-4 py-2 rounded-full text-sm font-semibold"
+                              style={{
+                                background: `${colors.secondary}10`,
+                                color: colors.secondary,
+                                border: `1px solid ${colors.border}30`
+                              }}
+                            >
+                              {benefit}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Price & CTA */}
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pt-4">
+                          <div>
+                            <div 
+                              className="text-xs uppercase tracking-wider font-semibold mb-1"
+                              style={{ color: colors.text, opacity: 0.5 }}
+                            >
+                              Price
+                            </div>
+                            <div 
+                              className="text-4xl md:text-5xl font-black"
+                              style={{ color: colors.accent }}
+                            >
+                              {s.price}
+                            </div>
+                          </div>
+                          
+                          <button
+                            className="px-8 py-4 rounded-full font-bold text-base uppercase tracking-wide transition-all hover:scale-105 active:scale-95"
+                            style={{
+                              background: `linear-gradient(135deg, ${colors.accent} 0%, ${colors.border} 100%)`,
+                              color: colors.background,
+                              boxShadow: `0 10px 30px ${colors.accent}40`
+                            }}
                           >
                             Add to Cart
                           </button>
                         </div>
                       </div>
+
+                      {/* Right - Product Image */}
+                      <div className="relative mx-auto" style={{ maxWidth: '450px' }}>
+                        <div className="relative aspect-square">
+                          {/* Glow */}
+                          <div 
+                            className="absolute inset-0 rounded-full"
+                            style={{
+                              background: `radial-gradient(circle, ${colors.accent}30 0%, transparent 70%)`,
+                              filter: 'blur(60px)',
+                              opacity: 0.6
+                            }}
+                          />
+                          
+                          {/* Product Image */}
+                          <div 
+                            className="relative rounded-full overflow-hidden"
+                            style={{
+                              boxShadow: `0 40px 80px ${colors.secondary}30`,
+                              border: `4px solid ${colors.background}`
+                            }}
+                          >
+                            <img 
+                              src={s.img}
+                              alt={s.text}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+
+                          {/* Discount Badge */}
+                          <div 
+                            className="absolute -top-4 -right-4 w-24 h-24 rounded-full flex items-center justify-center"
+                            style={{
+                              background: `linear-gradient(135deg, ${colors.accent} 0%, ${colors.border} 100%)`,
+                              boxShadow: `0 15px 40px ${colors.accent}50`
+                            }}
+                          >
+                            <div className="text-center" style={{ color: colors.background }}>
+                              <div className="text-xs font-bold uppercase">Save</div>
+                              <div className="text-2xl font-black">15%</div>
+                            </div>
+                          </div>
+
+                          {/* Info Badge */}
+                          <div 
+                            className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full whitespace-nowrap"
+                            style={{
+                              background: colors.background,
+                              boxShadow: `0 10px 30px ${colors.secondary}25`,
+                              border: `2px solid ${colors.border}20`
+                            }}
+                          >
+                            <div className="text-xs font-bold text-center" style={{ color: colors.secondary }}>
+                              100% Natural
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Ingredients Card */}
+                        <div 
+                          className="mt-8 p-5 rounded-2xl"
+                          style={{
+                            background: `${colors.secondary}08`,
+                            border: `1px solid ${colors.border}20`
+                          }}
+                        >
+                          <div 
+                            className="text-xs font-bold uppercase tracking-wider mb-2"
+                            style={{ color: colors.secondary, opacity: 0.7 }}
+                          >
+                            Key Ingredients
+                          </div>
+                          <div 
+                            className="text-sm font-medium"
+                            style={{ color: colors.text, opacity: 0.8 }}
+                          >
+                            {s.ingredients}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
-          </section>
-        ))}
+          </div>
+
+          {/* Bottom Navigation */}
+          <div className="flex justify-center pb-8">
+            <div 
+              className="flex items-center gap-6 px-8 py-4 rounded-full"
+              style={{
+                background: `${colors.background}98`,
+                backdropFilter: 'blur(20px)',
+                boxShadow: `0 10px 40px ${colors.secondary}20`,
+                border: `1px solid ${colors.border}15`
+              }}
+            >
+              <button
+                onClick={() => goToSlide(currentIndex - 1)}
+                disabled={currentIndex === 0}
+                className="w-10 h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                style={{
+                  background: currentIndex > 0 ? colors.secondary : 'transparent',
+                  color: currentIndex > 0 ? colors.background : colors.secondary
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                </svg>
+              </button>
+
+              <div className="flex items-center gap-2">
+                {sections.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => goToSlide(i)}
+                    className="transition-all duration-500 rounded-full"
+                    style={{
+                      width: i === currentIndex ? '32px' : '8px',
+                      height: '8px',
+                      background: i === currentIndex 
+                        ? `linear-gradient(90deg, ${colors.accent} 0%, ${colors.border} 100%)`
+                        : `${colors.secondary}25`
+                    }}
+                  />
+                ))}
+              </div>
+
+              <button
+                onClick={() => goToSlide(currentIndex + 1)}
+                disabled={currentIndex === sections.length - 1}
+                className="w-10 h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                style={{
+                  background: currentIndex < sections.length - 1 ? colors.secondary : 'transparent',
+                  color: currentIndex < sections.length - 1 ? colors.background : colors.secondary
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

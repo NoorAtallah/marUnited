@@ -1,3 +1,5 @@
+'use client';
+
 import { Mail, MapPin, Phone, Instagram, Facebook, Twitter } from 'lucide-react';
 
 const Footer = () => {
@@ -36,41 +38,35 @@ const Footer = () => {
     <footer 
       className="relative w-full overflow-hidden"
       style={{
-        background: colors.secondary
+        background: colors.background,
+        borderTop: `2px solid ${colors.border}`
       }}
     >
-      {/* Decorative top border */}
-      <div 
-        className="absolute top-0 left-0 right-0 h-1"
-        style={{
-          background: colors.border,
-          opacity: 0.4
-        }}
-      />
-
-      <div className="max-w-6xl mx-auto px-4 md:px-6 py-12 md:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 lg:py-20">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 md:gap-10 mb-10 md:mb-12">
-          {/* Brand Section */}
-          <div className="lg:col-span-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 md:gap-10 mb-10 md:mb-12">
+          
+          {/* Brand Section - Full width on mobile, spans 2 cols on md, 2 cols on lg */}
+          <div className="col-span-2 md:col-span-3 lg:col-span-2">
             <div className="flex items-center gap-3 mb-5">
               <div 
                 className="w-11 h-11 rounded-xl flex items-center justify-center"
                 style={{
                   background: colors.accent,
                   border: `2px solid ${colors.border}`,
-                  boxShadow: '0 4px 12px rgba(148,84,92,0.3)'
+                  boxShadow: `0 4px 12px ${colors.accent}40`
                 }}
               >
                 <span className="text-xl font-black" style={{ color: colors.background }}>✦</span>
               </div>
               <div>
                 <h3 className="text-lg font-black tracking-tight leading-none" style={{ 
-                  color: colors.background
+                  color: colors.text,
+                  textShadow: '0 1px 2px rgba(0,0,0,0.1)'
                 }}>
                   MAR UNITED
                 </h3>
-                <p className="text-[10px] tracking-[0.2em] uppercase font-semibold" style={{ color: colors.background, opacity: 0.8 }}>
+                <p className="text-[10px] tracking-[0.2em] uppercase font-semibold" style={{ color: colors.accent }}>
                   Premium Quality
                 </p>
               </div>
@@ -78,7 +74,7 @@ const Footer = () => {
             
             <p 
               className="text-sm leading-relaxed mb-5"
-              style={{ color: colors.background, opacity: 0.8 }}
+              style={{ color: colors.text, opacity: 0.7 }}
             >
               Experience the ancient healing powers of the Dead Sea. Premium skincare crafted from nature's most powerful minerals.
             </p>
@@ -97,7 +93,7 @@ const Footer = () => {
                     href="#"
                     className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 group"
                     style={{
-                      backgroundColor: 'rgba(255, 252, 251, 0.15)',
+                      background: colors.secondary,
                       border: `1px solid ${colors.border}`
                     }}
                     aria-label={social.label}
@@ -114,10 +110,10 @@ const Footer = () => {
           </div>
 
           {/* Shop Links */}
-          <div className="lg:col-span-2">
+          <div className="col-span-1">
             <h4 
               className="text-xs font-black tracking-wider uppercase mb-4"
-              style={{ color: colors.background }}
+              style={{ color: colors.text }}
             >
               Shop
             </h4>
@@ -126,12 +122,18 @@ const Footer = () => {
                 <li key={idx}>
                   <a
                     href={link.href}
-                    className="text-sm transition-all duration-300 hover:translate-x-1 inline-block group"
-                    style={{ color: colors.background, opacity: 0.75 }}
+                    className="text-sm transition-all duration-300 hover:translate-x-1 inline-block group relative"
+                    style={{ color: colors.text, opacity: 0.7 }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = '1';
+                      e.currentTarget.style.color = colors.accent;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = '0.7';
+                      e.currentTarget.style.color = colors.text;
+                    }}
                   >
-                    <span className="group-hover:opacity-100 transition-opacity duration-300">
-                      {link.name}
-                    </span>
+                    {link.name}
                   </a>
                 </li>
               ))}
@@ -139,10 +141,10 @@ const Footer = () => {
           </div>
 
           {/* Company Links */}
-          <div className="lg:col-span-2">
+          <div className="col-span-1">
             <h4 
               className="text-xs font-black tracking-wider uppercase mb-4"
-              style={{ color: colors.background }}
+              style={{ color: colors.text }}
             >
               Company
             </h4>
@@ -152,7 +154,15 @@ const Footer = () => {
                   <a
                     href={link.href}
                     className="text-sm transition-all duration-300 hover:translate-x-1 inline-block"
-                    style={{ color: colors.background, opacity: 0.75 }}
+                    style={{ color: colors.text, opacity: 0.7 }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = '1';
+                      e.currentTarget.style.color = colors.accent;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = '0.7';
+                      e.currentTarget.style.color = colors.text;
+                    }}
                   >
                     {link.name}
                   </a>
@@ -162,10 +172,10 @@ const Footer = () => {
           </div>
 
           {/* Support Links */}
-          <div className="lg:col-span-2">
+          <div className="col-span-1">
             <h4 
               className="text-xs font-black tracking-wider uppercase mb-4"
-              style={{ color: colors.background }}
+              style={{ color: colors.text }}
             >
               Support
             </h4>
@@ -175,7 +185,15 @@ const Footer = () => {
                   <a
                     href={link.href}
                     className="text-sm transition-all duration-300 hover:translate-x-1 inline-block"
-                    style={{ color: colors.background, opacity: 0.75 }}
+                    style={{ color: colors.text, opacity: 0.7 }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = '1';
+                      e.currentTarget.style.color = colors.accent;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = '0.7';
+                      e.currentTarget.style.color = colors.text;
+                    }}
                   >
                     {link.name}
                   </a>
@@ -185,29 +203,29 @@ const Footer = () => {
           </div>
 
           {/* Contact Info */}
-          <div className="lg:col-span-2">
+          <div className="col-span-1">
             <h4 
               className="text-xs font-black tracking-wider uppercase mb-4"
-              style={{ color: colors.background }}
+              style={{ color: colors.text }}
             >
               Contact
             </h4>
             <ul className="space-y-2.5">
               <li className="flex items-start gap-2">
-                <MapPin size={14} style={{ color: colors.background, marginTop: '2px', flexShrink: 0 }} />
-                <span className="text-sm" style={{ color: colors.background, opacity: 0.75 }}>
+                <MapPin size={14} style={{ color: colors.accent, marginTop: '2px', flexShrink: 0 }} />
+                <span className="text-sm" style={{ color: colors.text, opacity: 0.7 }}>
                   Zarqa, Jordan
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <Phone size={14} style={{ color: colors.background, marginTop: '2px', flexShrink: 0 }} />
-                <span className="text-sm" style={{ color: colors.background, opacity: 0.75 }}>
+                <Phone size={14} style={{ color: colors.accent, marginTop: '2px', flexShrink: 0 }} />
+                <span className="text-sm" style={{ color: colors.text, opacity: 0.7 }}>
                   +962 XX XXX XXXX
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <Mail size={14} style={{ color: colors.background, marginTop: '2px', flexShrink: 0 }} />
-                <span className="text-sm" style={{ color: colors.background, opacity: 0.75 }}>
+                <Mail size={14} style={{ color: colors.accent, marginTop: '2px', flexShrink: 0 }} />
+                <span className="text-sm" style={{ color: colors.text, opacity: 0.7 }}>
                   info@marunited.com
                 </span>
               </li>
@@ -217,24 +235,26 @@ const Footer = () => {
 
         {/* Newsletter Section */}
         <div 
-          className="rounded-xl p-6 md:p-8 mb-10 md:mb-12"
+          className="rounded-2xl p-6 md:p-8 mb-10 md:mb-12 backdrop-blur-xl"
           style={{
-            backgroundColor: 'rgba(255, 252, 251, 0.1)',
-            border: `1px solid ${colors.border}`
+            background: `${colors.secondary}08`,
+            border: `1px solid ${colors.border}`,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.08)'
           }}
         >
           <div className="max-w-2xl mx-auto text-center">
             <h4 
               className="text-xl md:text-2xl font-black mb-2"
               style={{ 
-                color: colors.background
+                color: colors.text,
+                textShadow: '0 1px 2px rgba(0,0,0,0.1)'
               }}
             >
               Join Our Community
             </h4>
             <p 
               className="text-sm mb-5"
-              style={{ color: colors.background, opacity: 0.8 }}
+              style={{ color: colors.text, opacity: 0.7 }}
             >
               Subscribe to receive exclusive offers, skincare tips, and updates
             </p>
@@ -243,20 +263,35 @@ const Footer = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 transition-all duration-300"
+                className="flex-1 px-4 py-3 rounded-xl text-sm focus:outline-none transition-all duration-300"
                 style={{
-                  backgroundColor: 'rgba(255, 252, 251, 0.15)',
+                  background: colors.background,
                   border: `1px solid ${colors.border}`,
-                  color: colors.background
+                  color: colors.text,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.border = `2px solid ${colors.accent}`;
+                  e.currentTarget.style.boxShadow = `0 4px 16px ${colors.accent}30`;
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.border = `1px solid ${colors.border}`;
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)';
                 }}
               />
               <button 
-                className="px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 hover:scale-105 whitespace-nowrap"
+                className="px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:scale-105 whitespace-nowrap"
                 style={{
                   background: colors.accent,
                   color: colors.background,
                   border: `2px solid ${colors.border}`,
-                  boxShadow: '0 4px 12px rgba(148, 84, 92, 0.3)'
+                  boxShadow: `0 4px 12px ${colors.accent}40`
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = `0 8px 24px ${colors.accent}50`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = `0 4px 12px ${colors.accent}40`;
                 }}
               >
                 Subscribe
@@ -268,11 +303,11 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div 
           className="pt-6 md:pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4"
-          style={{ borderColor: colors.border }}
+          style={{ borderColor: `${colors.border}40` }}
         >
           <p 
             className="text-xs md:text-sm text-center md:text-left"
-            style={{ color: colors.background, opacity: 0.6 }}
+            style={{ color: colors.text, opacity: 0.6 }}
           >
             © {currentYear} Mar United. All rights reserved.
           </p>
@@ -280,15 +315,31 @@ const Footer = () => {
           <div className="flex gap-5 md:gap-6">
             <a 
               href="#privacy" 
-              className="text-xs md:text-sm transition-colors duration-300 hover:opacity-100"
-              style={{ color: colors.background, opacity: 0.6 }}
+              className="text-xs md:text-sm transition-all duration-300"
+              style={{ color: colors.text, opacity: 0.6 }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '1';
+                e.currentTarget.style.color = colors.accent;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '0.6';
+                e.currentTarget.style.color = colors.text;
+              }}
             >
               Privacy Policy
             </a>
             <a 
               href="#terms" 
-              className="text-xs md:text-sm transition-colors duration-300 hover:opacity-100"
-              style={{ color: colors.background, opacity: 0.6 }}
+              className="text-xs md:text-sm transition-all duration-300"
+              style={{ color: colors.text, opacity: 0.6 }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '1';
+                e.currentTarget.style.color = colors.accent;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '0.6';
+                e.currentTarget.style.color = colors.text;
+              }}
             >
               Terms of Service
             </a>
