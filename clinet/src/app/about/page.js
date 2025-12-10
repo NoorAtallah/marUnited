@@ -73,7 +73,7 @@ const AboutUsPage = () => {
           </h1>
 
           <p className="text-xl md:text-2xl max-w-2xl mx-auto mb-12 leading-relaxed" style={{ color: '#3D6460' }}>
-            Where 21 essential minerals meet innovative skincare to reveal your skin's natural radiance
+            Where 21 essential minerals meet innovative skincare to reveal your skin&apos;s natural radiance
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
@@ -252,7 +252,7 @@ const AboutUsPage = () => {
               21 Essential <span style={{ color: '#94545C' }}>Minerals</span>
             </h2>
             <p className="text-lg max-w-2xl mx-auto" style={{ color: '#3D6460', opacity: 0.7 }}>
-              Each drop contains nature's most powerful skin-transforming elements
+              Each drop contains nature&apos;s most powerful skin-transforming elements
             </p>
           </div>
 
