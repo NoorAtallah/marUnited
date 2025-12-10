@@ -46,13 +46,13 @@ const ContactUsPage = () => {
               className="text-4xl md:text-5xl font-black leading-tight mb-4"
               style={{ color: '#2C2C2C', letterSpacing: '-0.02em' }}
             >
-              Let's Talk About
+              Let Us Talk About
               <br />
               Your <span style={{ color: '#94545C' }}>Skin Goals</span>
             </h1>
 
             <p className="text-lg leading-relaxed" style={{ color: '#3D6460', opacity: 0.7 }}>
-              We're here to answer questions, provide recommendations, and help you find the perfect products for your skin.
+              We are here to answer questions, provide recommendations, and help you find the perfect products for your skin.
             </p>
           </div>
         </div>
@@ -236,7 +236,7 @@ const ContactUsPage = () => {
                       Message Sent!
                     </h3>
                     <p className="text-base" style={{ color: '#3D6460' }}>
-                      We'll respond within 24 hours
+                      We will respond within 24 hours
                     </p>
                   </div>
                 )}
