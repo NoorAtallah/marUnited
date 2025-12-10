@@ -189,8 +189,8 @@ const AboutUsPage = () => {
                 </span>
               </div>
 
-              <h2 className="text-4xl md:text-5xl font-black leading-tight mb-6" style={{ color: '#2C2C2C' }}>
-                Born from Earth's 
+          <h2 className="text-4xl md:text-5xl font-black leading-tight mb-6" style={{ color: '#2C2C2C' }}>
+                Born from Earth&apos;s
                 <br />
                 <span style={{ color: '#94545C' }}>Most Mineral-Rich</span>
                 <br />
@@ -199,13 +199,13 @@ const AboutUsPage = () => {
 
               <div className="space-y-4 text-base leading-relaxed mb-8" style={{ color: '#2C2C2C', opacity: 0.7 }}>
                 <p>
-                 At 430 meters below sea level, the Dead Sea holds the planet's highest concentration of therapeutic minerals. For millennia, these waters have been revered for their transformative healing properties.
+                At 430 meters below sea level, the Dead Sea holds the planet&apos;s highest concentration of therapeutic minerals. For millennia, these waters have been revered for their transformative healing properties.
                 </p>
                 <p>
                   We harness this ancient power through sustainable extraction and cutting-edge formulation, creating skincare that bridges timeless natural wisdom with modern science.
                 </p>
                 <p>
-                 Every product is a testament to purity—free from harsh chemicals, rich in minerals, and designed to work harmoniously with your skin's natural processes.
+                 Every product is a testament to purity—free from harsh chemicals, rich in minerals, and designed to work harmoniously with your skin&apos;s natural processes.
                 </p>
               </div>
 
